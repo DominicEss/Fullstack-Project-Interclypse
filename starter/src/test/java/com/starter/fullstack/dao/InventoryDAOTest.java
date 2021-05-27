@@ -7,7 +7,7 @@ import javax.annotation.Resource;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Test;
+import org.junit.Test; 
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -37,16 +37,39 @@ public class InventoryDAOTest {
     this.mongoTemplate.dropCollection(Inventory.class);
   }
 
-  /**
-   * Test Find All method.
-   */
+ /**
+  * Test Find All method. 
+  */
   @Test
   public void findAll() {
     Inventory inventory = new Inventory();
     inventory.setName(NAME);
     inventory.setProductType(PRODUCT_TYPE);
     this.mongoTemplate.save(inventory);
+
     List<Inventory> actualInventory = this.inventoryDAO.findAll();
     Assert.assertFalse(actualInventory.isEmpty());
   }
+
+
+ /**
+  * Test create method. 
+  */
+  @Test
+ public void create() {
+    // create inventory object to put into mongo collection
+    Inventory inventory = new Inventory();
+    inventory.setName(NAME);
+    inventory.setProductType(PRODUCT_TYPE);
+
+    // add inventory object with create
+    this.inventoryDAO.create(inventory);
+
+    // this is assuming findAll has no bugs 
+    List<Inventory> actualInventory = this.inventoryDAO.findAll();
+
+    // There should be something in the list now so it shouldn't be empty
+    Assert.assertFalse(actualInventory.isEmpty());
+  }
+
 }
