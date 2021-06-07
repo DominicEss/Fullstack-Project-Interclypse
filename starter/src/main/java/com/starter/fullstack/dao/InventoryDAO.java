@@ -57,7 +57,7 @@ public class InventoryDAO {
     // insert inventory object into database
     mongoTemplate.insert(inventory);
 
-    return null;
+    return inventory;
   }
 
   /**

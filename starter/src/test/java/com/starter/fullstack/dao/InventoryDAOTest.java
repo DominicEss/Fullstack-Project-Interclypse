@@ -62,11 +62,21 @@ public class InventoryDAOTest {
     inventory.setName(NAME);
     inventory.setProductType(PRODUCT_TYPE);
 
+    // Check to make the ID is correctly set to NULL
+    Assert.assertNull(inventory.getId());
+
+    // this is assuming findAll has no bugs 
+    List<Inventory> actualInventory = this.inventoryDAO.findAll();
+
+    // There isn't anything in the list now so it should be empty
+    Assert.assertTrue(actualInventory.isEmpty());
+
+
     // add inventory object with create
     this.inventoryDAO.create(inventory);
 
     // this is assuming findAll has no bugs 
-    List<Inventory> actualInventory = this.inventoryDAO.findAll();
+    actualInventory = this.inventoryDAO.findAll();
 
     // There should be something in the list now so it shouldn't be empty
     Assert.assertFalse(actualInventory.isEmpty());
