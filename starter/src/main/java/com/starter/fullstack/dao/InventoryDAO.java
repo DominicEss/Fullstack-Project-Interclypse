@@ -10,6 +10,7 @@ import org.springframework.data.mongodb.core.index.Index;
 import org.springframework.data.mongodb.core.index.IndexOperations;
 import org.springframework.util.Assert;
 
+
 /**
  * Inventory DAO
  */
@@ -87,7 +88,13 @@ public class InventoryDAO {
    * @return Deleted Inventory.
    */
   public Optional<Inventory> delete(String id) {
-    // TODO
-    return Optional.empty();
+    Inventory deletedInventory = mongoTemplate.findById(id, Inventory.class);
+    Optional<Inventory> optDeletedInv = Optional.ofNullable(deletedInventory);
+    
+    if (deletedInventory != null) {
+      mongoTemplate.remove(deletedInventory);
+    }
+
+    return optDeletedInv;
   }
 }
