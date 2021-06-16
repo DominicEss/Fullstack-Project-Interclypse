@@ -90,9 +90,13 @@ public class InventoryDAO {
    * @return Deleted Inventory.
    */
   public Optional<Inventory> delete(String id) {
+    System.out.println("\n\n\nIn InventoryDAO delete with id: " + id + "\n\n\n");    
+
     Inventory deletedInventory = mongoTemplate.findAndRemove(query(where("id").is(id)), Inventory.class);
     Optional<Inventory> optDeletedInv = Optional.ofNullable(deletedInventory);
-  
+ 
+    System.out.println("\n\n\ndeleted inventory = " + optDeletedInv + "\n\n\n"); 
+ 
     return optDeletedInv;
   }
 }

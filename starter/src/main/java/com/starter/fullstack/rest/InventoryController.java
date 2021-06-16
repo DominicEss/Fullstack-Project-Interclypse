@@ -3,8 +3,10 @@ package com.starter.fullstack.rest;
 import com.starter.fullstack.api.Inventory;
 import com.starter.fullstack.dao.InventoryDAO;
 import java.util.List;
+import java.util.Optional;
 import javax.validation.Valid;
 import org.springframework.util.Assert;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -45,4 +47,24 @@ public class InventoryController {
   public Inventory create(@Valid @RequestBody Inventory inventory) {
     return this.inventoryDAO.create(inventory);
   }
+
+ /**
+   * Delete Inventory By Id.
+   *
+   * @param id String
+   * @return Inventory
+   */
+  @DeleteMapping("/inventory")
+  public Inventory deleteInventoryById(@RequestBody String id) {
+    System.out.println("\n\n\nIn delete controller with id: " + id + "\n\n\n");
+
+    Optional<Inventory> optInv = this.inventoryDAO.delete(id);
+     
+    if(optInv.isEmpty()){
+     return null;
+    }
+
+
+    return optInv.get();
+  } 
 }
