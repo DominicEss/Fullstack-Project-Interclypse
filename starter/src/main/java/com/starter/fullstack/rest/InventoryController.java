@@ -56,14 +56,11 @@ public class InventoryController {
    */
   @DeleteMapping("/inventory")
   public Inventory deleteInventoryById(@RequestBody String id) {
-    System.out.println("\n\n\nIn delete controller with id: " + id + "\n\n\n");
-
     Optional<Inventory> optInv = this.inventoryDAO.delete(id);
      
-    if(optInv.isEmpty()){
-     return null;
+    if (optInv.isEmpty()) {
+      return null;
     }
-
 
     return optInv.get();
   } 
