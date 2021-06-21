@@ -99,7 +99,7 @@ public class InventoryDAOTest {
     String idNumber = inventory.getId();
  
     Optional<Inventory> opt = this.inventoryDAO.delete(idNumber);
-    Assert.assertNotNull(opt);
+    Assert.assertTrue(opt.isPresent());
 
     actualInventory = this.inventoryDAO.findAll();
     Assert.assertTrue(actualInventory.isEmpty());
