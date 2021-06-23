@@ -92,7 +92,7 @@ public class InventoryDAO {
   public Optional<Inventory> delete(String id) {
     Inventory deletedInventory = mongoTemplate.findAndRemove(query(where("id").is(id)), Inventory.class);
     Optional<Inventory> optDeletedInv = Optional.ofNullable(deletedInventory);
-  
+ 
     return optDeletedInv;
   }
 }
