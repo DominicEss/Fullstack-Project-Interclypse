@@ -1,18 +1,28 @@
 import * as inventoryDuck from '../ducks/inventory'
-import * as productDuck from '../ducks/products'
+//import * as productDuck from '../ducks/products'
+import Avatar from '@material-ui/core/Avatar'
 import Checkbox from '@material-ui/core/Checkbox'
+import Divider from '@material-ui/core/Divider'
 import Grid from '@material-ui/core/Grid'
 import { makeStyles } from '@material-ui/core/styles'
 import { MeasurementUnits } from '../constants/units'
 import moment from 'moment'
+import ImageIcon from '@material-ui/icons/Image'
+import List from '@material-ui/core/List'
+import ListItem from '@material-ui/core/ListItem'
+import ListItemAvatar from '@material-ui/core/ListItemAvatar'
+import ListItemIcon from '@material-ui/core/ListItemIcon'
+import ListItemText from '@material-ui/core/ListItemText'
 import Paper from '@material-ui/core/Paper'
+import InventoryDeleteModal from '../components/Inventory/InventoryDeleteModal'
+import InventoryFormModal from '../components/Inventory/InventoryFormModal'
 import Table from '@material-ui/core/Table'
 import TableBody from '@material-ui/core/TableBody'
 import TableCell from '@material-ui/core/TableCell'
 import TableContainer from '@material-ui/core/TableContainer'
 import TableRow from '@material-ui/core/TableRow'
 import { EnhancedTableHead, EnhancedTableToolbar, getComparator, stableSort } from '../components/Table'
-import React, { useEffect } from 'react'
+import React, { useCallback, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 const useStyles = makeStyles((theme) => ({
@@ -46,12 +56,17 @@ const headCells = [
 const InventoryLayout = (props) => {
   const classes = useStyles()
   const dispatch = useDispatch()
+
   const inventory = useSelector(state => state.inventory.all)
   const isFetched = useSelector(state => state.inventory.fetched && state.products.fetched)
+  const removeInventory = useCallback(ids => { dispatch(inventoryDuck.removeInventory(ids)) }, [dispatch])
+  const saveInventory = useCallback(product => { dispatch(inventoryDuck.saveInventory(product)) }, [dispatch])
+
+
   useEffect(() => {
     if (!isFetched) {
       dispatch(inventoryDuck.findInventory())
-      dispatch(productDuck.findProducts())
+      //dispatch(productDuck.findProducts())
     }
   }, [dispatch, isFetched])
 
@@ -95,11 +110,76 @@ const InventoryLayout = (props) => {
 
   const isSelected = (id) => selected.indexOf(id) !== -1
 
+  const [isCreateOpen, setCreateOpen] = React.useState(false)
+  const [isEditOpen, setEditOpen] = React.useState(false)
+  const [isDeleteOpen, setDeleteOpen] = React.useState(false)
+
+  const toggleCreate = () => {
+    setCreateOpen(true)
+  }
+  const toggleEdit = () => {
+    setEditOpen(true)
+  }
+  const toggleDelete = () => {
+    setDeleteOpen(true)
+  }
+  const toggleModals = (resetChecked) => {
+    setCreateOpen(false)
+    setDeleteOpen(false)
+    setEditOpen(false)
+    if (resetChecked) {
+      setChecked([])
+    }
+  }
+  const [checked, setChecked] = React.useState([])
+  
+  const handleToggle = (value) => () => {
+    const currentIndex = checked.indexOf(value)
+    const newChecked = [...checked]
+
+    if (currentIndex === -1) {
+      newChecked.push(value)
+    } else {
+      newChecked.splice(currentIndex, 1)
+    }
+    setChecked(newChecked)
+  }
+
+
   return (
     <Grid container>
       <Grid item xs={12}>
-        <EnhancedTableToolbar numSelected={selected.length} title='Inventory'/>
-        <TableContainer component={Paper}>
+        <EnhancedTableToolbar
+          numSelected={selected.length}
+          title='Inventory'
+          toggleCreate={toggleCreate}
+          toggleDelete={toggleDelete}
+          toggleEdit={toggleEdit}
+        />
+        <InventoryFormModal
+          title='Create'
+          formName='inventoryCreate'
+          isDialogOpen={isCreateOpen}
+          handleDialog={toggleModals}
+          handleInventory={saveInventory}
+          initialValues={{}}
+        />
+        <InventoryFormModal
+          title='Edit'
+          formName='inventoryEdit'
+          isDialogOpen={isEditOpen}
+          handleDialog={toggleModals}
+          handleInventory={saveInventory}
+          initialValues={checked[0]}
+        />
+        <InventoryDeleteModal
+          isDialogOpen={isDeleteOpen}
+          handleDelete={removeInventory}
+          handleDialog={toggleModals}
+          initialValues={checked.map(check => check.id)}
+        />
+  
+      <TableContainer component={Paper}>
           <Table size='small' stickyHeader>
             <EnhancedTableHead
               classes={classes}
