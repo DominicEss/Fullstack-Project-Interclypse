@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { createAction, handleActions } from 'redux-actions'
-import { openSuccess } from '../alerts/index'
+//import { openSuccess } from '../alerts/index'
 
 
 const actions = {
@@ -29,6 +29,7 @@ export const saveInventory = createAction(actions.INVENTORY_SAVE, (inventory) =>
     .then((suc) => {
       const invs = []
       getState().inventory.all.forEach(inv => {
+        console.log("comparing inv.id: " + inv.id + " with suc.data.id: " + suc.data.id)
         if (inv.id !== suc.data.id) {
           invs.push(inv)
         }
@@ -41,7 +42,8 @@ export const saveInventory = createAction(actions.INVENTORY_SAVE, (inventory) =>
 export const removeInventory = createAction(actions.INVENTORY_DELETE, (ids) =>
   (dispatch, getState, config) => axios
     .delete(`${config.restAPIUrl}/inventory`, { data: ids })
-    .then((suc) => {
+    .then((data, suc) => {
+      console.log(ids);
       const invs = []
       getState().inventory.all.forEach(inv => {
         if (!ids.includes(inv.id)) {

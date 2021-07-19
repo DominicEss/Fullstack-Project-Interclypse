@@ -1,18 +1,18 @@
 import * as inventoryDuck from '../ducks/inventory'
 //import * as productDuck from '../ducks/products'
-import Avatar from '@material-ui/core/Avatar'
+//import Avatar from '@material-ui/core/Avatar'
 import Checkbox from '@material-ui/core/Checkbox'
-import Divider from '@material-ui/core/Divider'
+//import Divider from '@material-ui/core/Divider'
 import Grid from '@material-ui/core/Grid'
 import { makeStyles } from '@material-ui/core/styles'
 import { MeasurementUnits } from '../constants/units'
 import moment from 'moment'
-import ImageIcon from '@material-ui/icons/Image'
-import List from '@material-ui/core/List'
-import ListItem from '@material-ui/core/ListItem'
-import ListItemAvatar from '@material-ui/core/ListItemAvatar'
-import ListItemIcon from '@material-ui/core/ListItemIcon'
-import ListItemText from '@material-ui/core/ListItemText'
+//import ImageIcon from '@material-ui/icons/Image'
+//import List from '@material-ui/core/List'
+//import ListItem from '@material-ui/core/ListItem'
+//import ListItemAvatar from '@material-ui/core/ListItemAvatar'
+//import ListItemIcon from '@material-ui/core/ListItemIcon'
+//import ListItemText from '@material-ui/core/ListItemText'
 import Paper from '@material-ui/core/Paper'
 import InventoryDeleteModal from '../components/Inventory/InventoryDeleteModal'
 import InventoryFormModal from '../components/Inventory/InventoryFormModal'
@@ -60,7 +60,7 @@ const InventoryLayout = (props) => {
   const inventory = useSelector(state => state.inventory.all)
   const isFetched = useSelector(state => state.inventory.fetched && state.products.fetched)
   const removeInventory = useCallback(ids => { dispatch(inventoryDuck.removeInventory(ids)) }, [dispatch])
-  const saveInventory = useCallback(product => { dispatch(inventoryDuck.saveInventory(product)) }, [dispatch])
+  const saveInventory = useCallback(inventory => { dispatch(inventoryDuck.saveInventory(inventory)) }, [dispatch])
 
 
   useEffect(() => {
@@ -134,6 +134,7 @@ const InventoryLayout = (props) => {
   const [checked, setChecked] = React.useState([])
   
   const handleToggle = (value) => () => {
+    console.log(value)
     const currentIndex = checked.indexOf(value)
     const newChecked = [...checked]
 
@@ -206,7 +207,7 @@ const InventoryLayout = (props) => {
                       selected={isItemSelected}
                     >
                       <TableCell padding='checkbox'>
-                        <Checkbox checked={isItemSelected}/>
+                        <Checkbox onChange={handleToggle(inv)}  checked={isItemSelected}/>
                       </TableCell>
                       <TableCell padding='none'>{inv.name}</TableCell>
                       <TableCell align='right'>{inv.productType}</TableCell>
