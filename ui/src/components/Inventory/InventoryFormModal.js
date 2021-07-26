@@ -3,48 +3,59 @@ import Dialog from '@material-ui/core/Dialog'
 import DialogActions from '@material-ui/core/DialogActions'
 import DialogContent from '@material-ui/core/DialogContent'
 import DialogTitle from '@material-ui/core/DialogTitle'
+import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Grid from '@material-ui/core/Grid'
+import InputAdornment from '@material-ui/core/InputAdornment';
+import MenuItem from '@material-ui/core/MenuItem'
 import React from 'react'
 import TextField from '../Form/TextField'
+import SelectField from '../Form/SelectField'
+import CheckBox from '../Form/Checkbox'
 import { useField, useFormikContext, Field, Form, Formik } from 'formik'
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
-import * as yup from 'yup';
+import moment from 'moment'
+import { MeasurementUnits } from '../../constants/units/index.js'
 
-export const DatePickerField = ({ ...props }) => {
-  const { setFieldValue } = useFormikContext();
-  const [field] = useField(props);
-  return (
-    <DatePicker
-      {...field}
-      {...props}
-      selected={(field.value && new Date(field.value)) || null}
-      onChange={val => {
-        setFieldValue(field.name, val);
-      }}
-    />
-  );
-};
-
-const today = new Date();
-
-const InventorySchema = yup.object().shape({
-  name: yup.string()
-    .required('Required'),
-  productType: yup.string()
-    .required('Required'),
-  description: yup.string()
-    .required('Required'),
-  amount: yup.number()
-    .typeError('Amount must be a number')
-    .min(0, 'Cannot have negative inventory')
-    .required('Required'),
-  bestBeforeDate: yup.date()
-    .min(today, 'We do not want expired inventory')
-    .required('Required')
-});
+import InputLabel from '@material-ui/core/InputLabel'
 
 
+let today = new Date().toISOString().slice(0, 10);
+
+const tempProducts = [ 
+  {
+    value: "Hops",
+    label: "Hops",
+  },
+  {
+    value: "Malt",
+    label: "Malt",
+  },
+
+]
+
+
+function validatePositive(value) {
+  let error
+
+  if(!value) {
+    error = "Value required"
+  } else if (!(value >= 0)) {
+    error = "Must be greater than or equal to zero"
+  }
+  return error
+}
+
+
+function validateQuantity(value) {
+   let hasDecimal = (value - Math.floor(value)) !== 0;
+
+   let error
+   if (hasDecimal) {
+      error = "Must be a whole number"
+   } else {
+      error = validatePositive(value)
+   }
+   return error
+ }
 
 class InventoryFormModal extends React.Component {
   render() {
@@ -64,8 +75,10 @@ class InventoryFormModal extends React.Component {
       >
         <Formik
           initialValues={initialValues}
-          validationSchema={InventorySchema}
           onSubmit={values => {
+            const date = values.bestBeforeDate
+            const formattedDate = moment(date).toISOString()
+            values.bestBeforeDate = formattedDate
             handleInventory(values)
             handleDialog(true)
           }}>
@@ -79,64 +92,99 @@ class InventoryFormModal extends React.Component {
               </DialogTitle>
               <DialogContent>
                 <Grid container spacing={2}>
+
                   <Grid item xs={12} sm={12}>
                     <Field
+                      component={TextField}
                       custom={{ variant: 'outlined', fullWidth: true, }}
-                      name='name'
                       label='Name'
-                      component={TextField}
+                      name='name' 
                     />
                   </Grid>
+
                   <Grid item xs={12} sm={12}>
-                    <Field
-                      custom={{ variant: 'outlined', fullWidth: true, }}
-                      name='productType'
-                      label='Product Type'
-                      component={TextField}
-                    />
+                  <Field
+                     component={TextField}
+                     custom={{ variant: 'outlined', fullWidth: true, }}
+                     label='Product Type'
+                     name='productType'
+                     select
+                   >
+                   {tempProducts.map((option) => (
+                     <MenuItem key={option.value} value={option.value}>
+                       {option.label}
+                      </MenuItem>
+                   ))}
+                   </Field>
                   </Grid>
+
                   <Grid item xs={12} sm={12}>
                     <Field
+                      component={TextField}
                       custom={{ variant: 'outlined', fullWidth: true, }}
-                      name='description'
                       label='Description'
-                      component={TextField}
+                      name='description'
                     />
                   </Grid>
+
                   <Grid item xs={12} sm={12}>
                     <Field
-                      custom={{ variant: 'outlined', fullWidth: true, }}
-                      name='amount'
-                      label='Amount'
                       component={TextField}
+                      custom={{ variant: 'outlined', fullWidth: true, }}
+                      InputProps={{
+                        startAdornment: <InputAdornment position="start">$</InputAdornment>,
+                      }}
+                      label='Average Price'
+                      name='averagePrice'
+                      validate={validatePositive}
                    />
-                 </Grid>
+                  </Grid>
+
+                  <Grid item xs={12} sm={12}>
+                    <Field
+                      component={TextField}
+                      custom={{ variant: 'outlined', fullWidth: true, }}
+
+                      label='Amount'
+                      name='amount'
+                      validate = {validateQuantity}  
+                   />
+                  </Grid>
     
-                 <Grid item xs={12} sm={12}>
-                   <label style={{ display: 'block' }}>
-                    Unit of Measurement
-                     </label>
-                 
-                   <Field as="select" name="unitOfMeasurement">
-                   <option value="CUP">Cup</option>
-                   <option value="GALLON">Gallon</option>
-                   <option value="OUNCE">Ounce</option>
-                   <option value="PINT">Pint</option>
-                   <option value="POUND">Pound</option>
-                   <option value="QUART">Quart</option>
-                   </Field>                 
+                  <Grid item xs={12} sm={12}>
+                    <Field
+                      component={TextField}
+                      custom={{ variant: 'outlined', fullWidth: true, }}
+                      label="Unit of Measurement"
+                      name='unitOfMeasurement'
+                      select
+                    >
+                      {Object.keys(MeasurementUnits).map((key) => (
+                        <MenuItem key={key} value={key}>
+                          {MeasurementUnits[key].name}
+                        </MenuItem>
+                       ))}
+                    </Field>                 
+                  </Grid>
 
-                 </Grid>
+                  <Grid item xs={12} sm={12}>
+                    <Field
+                      component={TextField}
+                      custom={{ variant: 'outlined', fullWidth: true, }}
+                      label='Best Before Date'
+                      name='bestBeforeDate'
+                      type="date"
+                    />
+                  </Grid>
 
-                 <Grid item xs={12} sm={12}>
-                   <label style={{ display: 'block' }}>
-                    Expiration Date
-                    </label>
-
-                   <DatePickerField name="bestBeforeDate" />
-
-                 </Grid>
-
+                  <Grid item xs={12} sm={12}>
+                    <InputLabel id="never-expires-label">Never Expires?</InputLabel>
+                    <Field
+                      name="neverExpires"
+                      label="neverExpires"
+                      component={CheckBox}
+                     />
+                  </Grid>
                 </Grid>
 
               </DialogContent>

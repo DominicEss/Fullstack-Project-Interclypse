@@ -2,6 +2,7 @@ package com.starter.fullstack.dao;
 
 import com.starter.fullstack.api.Inventory;
 import com.starter.fullstack.config.EmbedMongoClientOverrideConfig;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import javax.annotation.Resource;
@@ -96,8 +97,8 @@ public class InventoryDAOTest {
     List<Inventory> actualInventory = this.inventoryDAO.findAll();
     Assert.assertFalse(actualInventory.isEmpty());
     
-    String idNumber = inventory.getId();
- 
+    List<String> idNumber = Arrays.asList(inventory.getId());
+
     Optional<Inventory> opt = this.inventoryDAO.delete(idNumber);
     Assert.assertTrue(opt.isPresent());
 

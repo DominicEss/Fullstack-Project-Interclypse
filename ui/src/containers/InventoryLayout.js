@@ -1,18 +1,10 @@
 import * as inventoryDuck from '../ducks/inventory'
-//import * as productDuck from '../ducks/products'
-//import Avatar from '@material-ui/core/Avatar'
+import * as productDuck from '../ducks/products'
 import Checkbox from '@material-ui/core/Checkbox'
-//import Divider from '@material-ui/core/Divider'
 import Grid from '@material-ui/core/Grid'
 import { makeStyles } from '@material-ui/core/styles'
 import { MeasurementUnits } from '../constants/units'
 import moment from 'moment'
-//import ImageIcon from '@material-ui/icons/Image'
-//import List from '@material-ui/core/List'
-//import ListItem from '@material-ui/core/ListItem'
-//import ListItemAvatar from '@material-ui/core/ListItemAvatar'
-//import ListItemIcon from '@material-ui/core/ListItemIcon'
-//import ListItemText from '@material-ui/core/ListItemText'
 import Paper from '@material-ui/core/Paper'
 import InventoryDeleteModal from '../components/Inventory/InventoryDeleteModal'
 import InventoryFormModal from '../components/Inventory/InventoryFormModal'
@@ -24,6 +16,16 @@ import TableRow from '@material-ui/core/TableRow'
 import { EnhancedTableHead, EnhancedTableToolbar, getComparator, stableSort } from '../components/Table'
 import React, { useCallback, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+
+let today = new Date().toISOString().slice(0, 10);
+
+let emptyValues = {
+  amount: "0",
+  averagePrice: "0",
+  bestBeforeDate: today,
+  description: '"',
+}
+
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -66,7 +68,7 @@ const InventoryLayout = (props) => {
   useEffect(() => {
     if (!isFetched) {
       dispatch(inventoryDuck.findInventory())
-      //dispatch(productDuck.findProducts())
+      dispatch(productDuck.findProducts())
     }
   }, [dispatch, isFetched])
 
@@ -106,7 +108,7 @@ const InventoryLayout = (props) => {
       )
     }
     setSelected(newSelected)
-  }
+  } 
 
   const isSelected = (id) => selected.indexOf(id) !== -1
 
@@ -128,22 +130,23 @@ const InventoryLayout = (props) => {
     setDeleteOpen(false)
     setEditOpen(false)
     if (resetChecked) {
-      setChecked([])
+      setSelected([])
     }
   }
   const [checked, setChecked] = React.useState([])
   
   const handleToggle = (value) => () => {
     console.log(value)
-    const currentIndex = checked.indexOf(value)
-    const newChecked = [...checked]
+    const currentIndex = selected.indexOf(value)
+    console.log("value's index: " + currentIndex)
+    const newSelected = [...selected]
 
     if (currentIndex === -1) {
-      newChecked.push(value)
+      newSelected.push(value)
     } else {
-      newChecked.splice(currentIndex, 1)
+      newSelected.splice(currentIndex, 1)
     }
-    setChecked(newChecked)
+    setSelected(newSelected)
   }
 
 
@@ -163,7 +166,7 @@ const InventoryLayout = (props) => {
           isDialogOpen={isCreateOpen}
           handleDialog={toggleModals}
           handleInventory={saveInventory}
-          initialValues={{}}
+          initialValues={emptyValues}
         />
         <InventoryFormModal
           title='Edit'
@@ -177,7 +180,7 @@ const InventoryLayout = (props) => {
           isDialogOpen={isDeleteOpen}
           handleDelete={removeInventory}
           handleDialog={toggleModals}
-          initialValues={checked.map(check => check.id)}
+          initialValues={selected}
         />
   
       <TableContainer component={Paper}>
@@ -207,7 +210,7 @@ const InventoryLayout = (props) => {
                       selected={isItemSelected}
                     >
                       <TableCell padding='checkbox'>
-                        <Checkbox onChange={handleToggle(inv)}  checked={isItemSelected}/>
+                        <Checkbox checked={isItemSelected}/>
                       </TableCell>
                       <TableCell padding='none'>{inv.name}</TableCell>
                       <TableCell align='right'>{inv.productType}</TableCell>

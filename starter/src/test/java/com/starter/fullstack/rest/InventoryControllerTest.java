@@ -2,6 +2,8 @@ package com.starter.fullstack.rest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.starter.fullstack.api.Inventory;
+import java.util.Arrays;
+import java.util.List;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -80,10 +82,12 @@ public class InventoryControllerTest {
   public void remove() throws Throwable { 
     Assert.assertEquals(1, this.mongoTemplate.findAll(Inventory.class).size());
 
+    List<String> idNumber = Arrays.asList(inventory.getId());
+
     this.mockMvc.perform(delete("/inventory")
         .accept(MediaType.APPLICATION_JSON)
         .contentType(MediaType.APPLICATION_JSON)
-        .content(this.inventory.getId()))
+        .content("[\"" + this.inventory.getId() + "\"]"))
       .andExpect(status().isOk());
 
     Assert.assertEquals(0, this.mongoTemplate.findAll(Inventory.class).size());

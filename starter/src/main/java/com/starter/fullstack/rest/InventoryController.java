@@ -29,8 +29,8 @@ public class InventoryController {
   }
 
   /**
-   * Find Products.
-   * @return List of Product.
+   * Find Inventory.
+   * @return List of Inventory.
    */
   @GetMapping("/inventory")
   public List<Inventory> findInventories() {
@@ -54,10 +54,10 @@ public class InventoryController {
    * @param id String
    * @return Inventory
    */
-  @DeleteMapping("/inventory")
-  public Inventory deleteInventoryById(@RequestBody String id) {
+  @DeleteMapping(value = "/inventory")
+  public Inventory deleteInventoryById(@RequestBody List<String> id) {
     Optional<Inventory> optInv = this.inventoryDAO.delete(id);
-     
+  
     if (optInv.isEmpty()) {
       return null;
     }
