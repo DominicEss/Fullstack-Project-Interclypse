@@ -6,14 +6,26 @@ import { makeStyles } from '@material-ui/core/styles'
 import { MeasurementUnits } from '../constants/units'
 import moment from 'moment'
 import Paper from '@material-ui/core/Paper'
+import InventoryDeleteModal from '../components/Inventory/InventoryDeleteModal'
+import InventoryFormModal from '../components/Inventory/InventoryFormModal'
 import Table from '@material-ui/core/Table'
 import TableBody from '@material-ui/core/TableBody'
 import TableCell from '@material-ui/core/TableCell'
 import TableContainer from '@material-ui/core/TableContainer'
 import TableRow from '@material-ui/core/TableRow'
 import { EnhancedTableHead, EnhancedTableToolbar, getComparator, stableSort } from '../components/Table'
-import React, { useEffect } from 'react'
+import React, { useCallback, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+
+let today = new Date().toISOString().slice(0, 10);
+
+let emptyValues = {
+  amount: "0",
+  averagePrice: "0",
+  bestBeforeDate: today,
+  description: '"',
+}
+
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -46,8 +58,13 @@ const headCells = [
 const InventoryLayout = (props) => {
   const classes = useStyles()
   const dispatch = useDispatch()
+
   const inventory = useSelector(state => state.inventory.all)
   const isFetched = useSelector(state => state.inventory.fetched && state.products.fetched)
+  const removeInventory = useCallback(ids => { dispatch(inventoryDuck.removeInventory(ids)) }, [dispatch])
+  const saveInventory = useCallback(inventory => { dispatch(inventoryDuck.saveInventory(inventory)) }, [dispatch])
+
+
   useEffect(() => {
     if (!isFetched) {
       dispatch(inventoryDuck.findInventory())
@@ -91,15 +108,82 @@ const InventoryLayout = (props) => {
       )
     }
     setSelected(newSelected)
-  }
+  } 
 
   const isSelected = (id) => selected.indexOf(id) !== -1
+
+  const [isCreateOpen, setCreateOpen] = React.useState(false)
+  const [isEditOpen, setEditOpen] = React.useState(false)
+  const [isDeleteOpen, setDeleteOpen] = React.useState(false)
+
+  const toggleCreate = () => {
+    setCreateOpen(true)
+  }
+  const toggleEdit = () => {
+    setEditOpen(true)
+  }
+  const toggleDelete = () => {
+    setDeleteOpen(true)
+  }
+  const toggleModals = (resetChecked) => {
+    setCreateOpen(false)
+    setDeleteOpen(false)
+    setEditOpen(false)
+    if (resetChecked) {
+      setSelected([])
+    }
+  }
+  const [checked, setChecked] = React.useState([])
+  
+  const handleToggle = (value) => () => {
+    console.log(value)
+    const currentIndex = selected.indexOf(value)
+    console.log("value's index: " + currentIndex)
+    const newSelected = [...selected]
+
+    if (currentIndex === -1) {
+      newSelected.push(value)
+    } else {
+      newSelected.splice(currentIndex, 1)
+    }
+    setSelected(newSelected)
+  }
+
 
   return (
     <Grid container>
       <Grid item xs={12}>
-        <EnhancedTableToolbar numSelected={selected.length} title='Inventory'/>
-        <TableContainer component={Paper}>
+        <EnhancedTableToolbar
+          numSelected={selected.length}
+          title='Inventory'
+          toggleCreate={toggleCreate}
+          toggleDelete={toggleDelete}
+          toggleEdit={toggleEdit}
+        />
+        <InventoryFormModal
+          title='Create'
+          formName='inventoryCreate'
+          isDialogOpen={isCreateOpen}
+          handleDialog={toggleModals}
+          handleInventory={saveInventory}
+          initialValues={emptyValues}
+        />
+        <InventoryFormModal
+          title='Edit'
+          formName='inventoryEdit'
+          isDialogOpen={isEditOpen}
+          handleDialog={toggleModals}
+          handleInventory={saveInventory}
+          initialValues={checked[0]}
+        />
+        <InventoryDeleteModal
+          isDialogOpen={isDeleteOpen}
+          handleDelete={removeInventory}
+          handleDialog={toggleModals}
+          initialValues={selected}
+        />
+  
+      <TableContainer component={Paper}>
           <Table size='small' stickyHeader>
             <EnhancedTableHead
               classes={classes}
