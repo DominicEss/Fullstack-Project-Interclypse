@@ -57,7 +57,6 @@ public class InventoryController {
   @DeleteMapping(value = "/inventory")
   public Inventory deleteInventoryById(@RequestBody List<String> id) {
     Optional<Inventory> optInv = this.inventoryDAO.delete(id);
-  
     if (optInv.isEmpty()) {
       return null;
     }
