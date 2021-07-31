@@ -24,6 +24,10 @@ let emptyValues = {
   averagePrice: "0",
   bestBeforeDate: today,
   description: '"',
+  name: "",
+  productType: "",
+  products: null,
+  unitOfMeasurement: "",
 }
 
 
@@ -59,6 +63,7 @@ const InventoryLayout = (props) => {
   const classes = useStyles()
   const dispatch = useDispatch()
 
+  const products = useSelector(state => state.products.all)
   const inventory = useSelector(state => state.inventory.all)
   const isFetched = useSelector(state => state.inventory.fetched && state.products.fetched)
   const removeInventory = useCallback(ids => { dispatch(inventoryDuck.removeInventory(ids)) }, [dispatch])
@@ -133,20 +138,18 @@ const InventoryLayout = (props) => {
       setSelected([])
     }
   }
-  const [checked, setChecked] = React.useState([])
+  const [checked] = React.useState([])
   
-  const handleToggle = (value) => () => {
-    console.log(value)
-    const currentIndex = selected.indexOf(value)
-    console.log("value's index: " + currentIndex)
-    const newSelected = [...selected]
 
-    if (currentIndex === -1) {
-      newSelected.push(value)
-    } else {
-      newSelected.splice(currentIndex, 1)
+  const updateProducts = () => {
+    let productNames = []
+
+    for( let i = 0, l = products.length; i < l; i++){
+      productNames[i] = products[i].name
     }
-    setSelected(newSelected)
+    emptyValues.products = productNames
+    
+    return emptyValues
   }
 
 
@@ -166,7 +169,7 @@ const InventoryLayout = (props) => {
           isDialogOpen={isCreateOpen}
           handleDialog={toggleModals}
           handleInventory={saveInventory}
-          initialValues={emptyValues}
+          initialValues={updateProducts()}
         />
         <InventoryFormModal
           title='Edit'

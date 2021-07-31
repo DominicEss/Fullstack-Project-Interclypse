@@ -44,11 +44,9 @@ export const removeInventory = createAction(actions.INVENTORY_DELETE, (ids) =>
   (dispatch, getState, config) => axios
     .delete(`${config.restAPIUrl}/inventory`, { data: ids })
     .then((suc) => {
-      //console.log("suc: " + suc.data)
       const invs = []
       let deletedName = null
       let numDeleted = 0
-     
  
       getState().inventory.all.forEach(inv => {
         if (!ids.includes(inv.id)) {
@@ -60,7 +58,7 @@ export const removeInventory = createAction(actions.INVENTORY_DELETE, (ids) =>
         }
       })
       
-      if (numDeleted == 1){
+      if (numDeleted === 1){
         dispatch(openSuccess(deletedName + " successfully removed"))
       }
       else {

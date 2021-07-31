@@ -3,33 +3,17 @@ import Dialog from '@material-ui/core/Dialog'
 import DialogActions from '@material-ui/core/DialogActions'
 import DialogContent from '@material-ui/core/DialogContent'
 import DialogTitle from '@material-ui/core/DialogTitle'
-import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Grid from '@material-ui/core/Grid'
 import InputAdornment from '@material-ui/core/InputAdornment';
 import MenuItem from '@material-ui/core/MenuItem'
 import React from 'react'
 import TextField from '../Form/TextField'
 import CheckBox from '../Form/Checkbox'
-import { useField, useFormikContext, Field, Form, Formik } from 'formik'
+import { Field, Form, Formik } from 'formik'
 import moment from 'moment'
 import { MeasurementUnits } from '../../constants/units/index.js'
 
 import InputLabel from '@material-ui/core/InputLabel'
-
-
-let today = new Date().toISOString().slice(0, 10);
-
-const tempProducts = [ 
-  {
-    value: "Hops",
-    label: "Hops",
-  },
-  {
-    value: "Malt",
-    label: "Malt",
-  },
-
-]
 
 
 function validatePositive(value) {
@@ -55,6 +39,7 @@ function validateQuantity(value) {
    }
    return error
  }
+
 
 class InventoryFormModal extends React.Component {
   render() {
@@ -97,7 +82,8 @@ class InventoryFormModal extends React.Component {
                       component={TextField}
                       custom={{ variant: 'outlined', fullWidth: true, }}
                       label='Name'
-                      name='name' 
+                      name='name'
+                      required 
                     />
                   </Grid>
 
@@ -108,12 +94,14 @@ class InventoryFormModal extends React.Component {
                      label='Product Type'
                      name='productType'
                      select
+                     required
                    >
-                   {tempProducts.map((option) => (
-                     <MenuItem key={option.value} value={option.value}>
-                       {option.label}
+                   {initialValues.products.map((option) => (
+                     <MenuItem key={option} value={option}>
+                       {option}
                       </MenuItem>
                    ))}
+
                    </Field>
                   </Grid>
 
@@ -143,7 +131,6 @@ class InventoryFormModal extends React.Component {
                     <Field
                       component={TextField}
                       custom={{ variant: 'outlined', fullWidth: true, }}
-
                       label='Amount'
                       name='amount'
                       validate = {validateQuantity}  
@@ -157,6 +144,7 @@ class InventoryFormModal extends React.Component {
                       label="Unit of Measurement"
                       name='unitOfMeasurement'
                       select
+                      required
                     >
                       {Object.keys(MeasurementUnits).map((key) => (
                         <MenuItem key={key} value={key}>
