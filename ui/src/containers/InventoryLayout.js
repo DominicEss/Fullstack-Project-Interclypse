@@ -24,10 +24,10 @@ let emptyValues = {
   averagePrice: "0",
   bestBeforeDate: today,
   description: '"',
-  unitOfMeasurement: Object.keys(MeasurementUnits)[0],
+  unitOfMeasurement: "",
   name: "",
   products: null,
-  productType: null,
+  productType: "",
 }
 
 
@@ -148,7 +148,7 @@ const InventoryLayout = (props) => {
       productNames[i] = products[i].name
     }
     emptyValues.products = productNames
-    emptyValues.productType = productNames[0]
+    emptyValues.productType = ""
     
     return emptyValues
   }

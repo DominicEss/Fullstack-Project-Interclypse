@@ -15,12 +15,17 @@ import { MeasurementUnits } from '../../constants/units/index.js'
 
 import InputLabel from '@material-ui/core/InputLabel'
 
+String.prototype.isEmpty = function() {
+    return (this.length === 0 || !this.trim());
+};
 
 function validatePositive(value) {
   let error
 
-  if(!value) {
-    error = "Value required"
+  if(value.isEmpty()) {
+    error = "Empty value"
+  } else if(isNaN(value)) {
+    error = "Value is not a number"
   } else if (!(value >= 0)) {
     error = "Must be greater than or equal to zero"
   }
@@ -40,6 +45,18 @@ function validateQuantity(value) {
    return error
  }
 
+function validateNotBlank(value) {
+  let error
+  console.log("validateNotBlank")
+  console.log("value: " + value)
+
+  if(value === undefined) {
+    error = "Value required"
+  } else if(value.isEmpty()) {
+    error = "Value required"
+  }
+  return error
+}
 
 class InventoryFormModal extends React.Component {
   render() {
@@ -96,6 +113,7 @@ class InventoryFormModal extends React.Component {
                      name='productType'
                      required
                      select
+                     validate={validateNotBlank}
                    >
                    {initialValues.products.map((option) => (
                      <MenuItem key={option} value={option}>
@@ -146,6 +164,7 @@ class InventoryFormModal extends React.Component {
                       name='unitOfMeasurement'
                       select
                       required
+                      validate = {validateNotBlank}
                     >
                       {Object.keys(MeasurementUnits).map((key) => (
                         <MenuItem key={key} value={key}>
