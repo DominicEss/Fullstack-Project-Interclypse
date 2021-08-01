@@ -27,10 +27,16 @@ export const saveInventory = createAction(actions.INVENTORY_SAVE, (inventory) =>
   (dispatch, getState, config) => axios
     .post(`${config.restAPIUrl}/inventory`, inventory)
     .then((suc) => {
+      console.log("In save inventory")
+
       const invs = []
       getState().inventory.all.forEach(inv => {
+        console.log("comparing inv.id: " + inv.id + " with suc.data.id: " + suc.data.id)
         if (inv.id !== suc.data.id) {
           invs.push(inv)
+        }
+        else {
+          console.log("\n\n Found Match \n\n")
         }
       })
       

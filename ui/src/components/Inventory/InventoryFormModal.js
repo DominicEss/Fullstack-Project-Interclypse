@@ -12,13 +12,10 @@ import CheckBox from '../Form/Checkbox'
 import { Field, Form, Formik } from 'formik'
 import moment from 'moment'
 import { MeasurementUnits } from '../../constants/units/index.js'
-
 import InputLabel from '@material-ui/core/InputLabel'
 
 
-const isEmpty = function(value) {
-    return (value.length === 0 || !value.trim());
-};
+
 
 function validatePositive(value) {
   let error
@@ -59,6 +56,11 @@ function validateNotBlank(value) {
   return error
 }
 
+const isEmpty = function(value) {
+    return (value.length === 0 || !value.trim());
+  };
+
+
 class InventoryFormModal extends React.Component {
   render() {
     const {
@@ -82,6 +84,9 @@ class InventoryFormModal extends React.Component {
             const date = values.bestBeforeDate
             const formattedDate = moment(date).toISOString()
             values.bestBeforeDate = formattedDate
+
+            values.products = null
+
             handleInventory(values)
             handleDialog(true)
           }}>

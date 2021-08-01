@@ -17,17 +17,19 @@ import { EnhancedTableHead, EnhancedTableToolbar, getComparator, stableSort } fr
 import React, { useCallback, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
-let today = new Date().toISOString().slice(0, 10);
+let today = new Date().toISOString().slice(0, 10)
 
 let emptyValues = {
   amount: "0",
   averagePrice: "0",
   bestBeforeDate: today,
   description: '"',
-  unitOfMeasurement: "",
+  id: "",
   name: "",
   products: null,
   productType: "",
+  unitOfMeasurement: "",
+  version: 0,
 }
 
 
@@ -140,8 +142,7 @@ const InventoryLayout = (props) => {
   }
   const [checked] = React.useState([])
   
-
-  const updateProducts = () => {
+  const getProductNames = () => {
     let productNames = []
 
     for( let i = 0, l = products.length; i < l; i++){
@@ -149,7 +150,46 @@ const InventoryLayout = (props) => {
     }
     emptyValues.products = productNames
     emptyValues.productType = ""
-    
+
+    return productNames
+  }
+
+  const updateEmptyValues = () => {
+    emptyValues.amount = 0
+    emptyValues.averagePrice = 0
+    emptyValues.bestBeforeDate = today
+    emptyValues.description = '"'
+    emptyValues.id = null
+    emptyValues.name = ""
+    emptyValues.productType = undefined
+    emptyValues.products = getProductNames()
+    emptyValues.unitOfMeasurement = undefined
+
+    return emptyValues
+  }
+
+  const testPrint = (values) => {
+    console.log("Edit initial values")
+    console.log(values)
+    return values
+  }
+
+  const convertIdToValues = (id) => {
+    for( let i = 0, l = inventory.length; i < l; i++){
+      if( id == inventory[i].id ) {
+        emptyValues.amount = inventory[i].amount
+        emptyValues.averagePrice = inventory[i].averagePrice
+        emptyValues.bestBeforeDate = inventory[i].bestBeforeDate.slice(0,10)
+        emptyValues.description = inventory[i].description
+        emptyValues.id = inventory[i].id
+        emptyValues.name = inventory[i].name
+        emptyValues.productType = inventory[i].productType
+        emptyValues.products = getProductNames()
+        emptyValues.unitOfMeasurement = inventory[i].unitOfMeasurement
+      //  emptyValues.version = 1
+      }
+    }
+
     return emptyValues
   }
 
@@ -170,7 +210,7 @@ const InventoryLayout = (props) => {
           isDialogOpen={isCreateOpen}
           handleDialog={toggleModals}
           handleInventory={saveInventory}
-          initialValues={updateProducts()}
+          initialValues={updateEmptyValues()}
         />
         <InventoryFormModal
           title='Edit'
@@ -178,7 +218,7 @@ const InventoryLayout = (props) => {
           isDialogOpen={isEditOpen}
           handleDialog={toggleModals}
           handleInventory={saveInventory}
-          initialValues={checked[0]}
+          initialValues={convertIdToValues(selected)}
         />
         <InventoryDeleteModal
           isDialogOpen={isDeleteOpen}

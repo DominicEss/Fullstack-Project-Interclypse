@@ -48,6 +48,25 @@ public class InventoryController {
     return this.inventoryDAO.create(inventory);
   }
 
+
+  /**
+   * Retrieve Inventory.
+   * @param id Inventory id to Retrieve.
+   * @return Found Inventory.
+   */
+  /*
+  @GetMapping("/inventory")
+  public Inventory retrieveInventoryById(@RequestBody String id) {
+    Optional<Inventory> optInv = this.inventoryDAO.retrieve(id);
+
+    if (optInv.isEmpty()) {
+      return null;
+    }
+
+    return optInv.get();  
+  }
+*/
+
  /**
    * Delete Inventory By Id.
    *

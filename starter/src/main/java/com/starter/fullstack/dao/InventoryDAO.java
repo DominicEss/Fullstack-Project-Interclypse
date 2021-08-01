@@ -9,13 +9,18 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.index.Index;
 import org.springframework.data.mongodb.core.index.IndexOperations;
 import org.springframework.util.Assert;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
+
 import static org.springframework.data.mongodb.core.query.Criteria.where;
 import static org.springframework.data.mongodb.core.query.Query.query;
+
 
 /**
  * Inventory DAO
  */
-public class InventoryDAO {
+public class InventoryDAO  {
   private final MongoTemplate mongoTemplate;
   private static final String NAME = "name";
   private static final String PRODUCT_TYPE = "productType";
@@ -54,10 +59,22 @@ public class InventoryDAO {
    */
   public Inventory create(Inventory inventory) {
     // set id to NULL
-    inventory.setId(null);
+    //inventory.setId(null);
+
+    System.out.println("In InventoryDAO create " + inventory.getId());
+
+    //Query query = new Query(Criteria.where("_id").is(inventory.getId()));
+    Update update = new Update().set( "name", inventory.getName())
+                                .set( "productType", inventory.getProductType())
+                                .set( "description", inventory.getDescription())
+                                .set( "averagePrice", inventory.getAveragePrice())
+                                .set( "amount", inventory.getAmount())
+                                .set( "unitOfMeasurement", inventory.getUnitOfMeasurement())
+                                .set( "bestBeforeDate", inventory.getBestBeforeDate());
+                             //   .set( "neverExpires", inventory.neverExpires());
 
     // insert inventory object into database
-    mongoTemplate.insert(inventory);
+    mongoTemplate.upsert(query(where("_id").is(inventory.getId())), update, Inventory.class);
 
     return inventory;
   }
@@ -67,10 +84,16 @@ public class InventoryDAO {
    * @param id Inventory id to Retrieve.
    * @return Found Inventory.
    */
+  /*
   public Optional<Inventory> retrieve(String id) {
-    // TODO
-    return Optional.empty();
+    Inventory foundInventory = null;
+    foundInventory = mongoTemplate.findById(id, Inventory.class);
+    
+    Optional<Inventory> optDeletedInv = Optional.ofNullable(foundInventory);
+ 
+    return optDeletedInv;
   }
+  */
 
   /**
    * Update Inventory.
@@ -79,7 +102,9 @@ public class InventoryDAO {
    * @return Updated Inventory.
    */
   public Optional<Inventory> update(String id, Inventory inventory) {
-    // TODO
+    //Inventory user = mongoTemplate.findOne(query(where("_id").is(id)), Inventory.class);
+    
+
     return Optional.empty();
   }
 
