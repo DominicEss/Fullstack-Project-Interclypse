@@ -60,6 +60,7 @@ class InventoryFormModal extends React.Component {
         <Formik
           initialValues={initialValues}
           onSubmit={values => {
+            values.products = null
             const date = values.bestBeforeDate
             const formattedDate = moment(date).toISOString()
             values.bestBeforeDate = formattedDate
@@ -83,7 +84,7 @@ class InventoryFormModal extends React.Component {
                       custom={{ variant: 'outlined', fullWidth: true, }}
                       label='Name'
                       name='name'
-                      required 
+                      required
                     />
                   </Grid>
 
@@ -93,8 +94,8 @@ class InventoryFormModal extends React.Component {
                      custom={{ variant: 'outlined', fullWidth: true, }}
                      label='Product Type'
                      name='productType'
-                     select
                      required
+                     select
                    >
                    {initialValues.products.map((option) => (
                      <MenuItem key={option} value={option}>
