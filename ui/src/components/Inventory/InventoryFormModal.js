@@ -15,14 +15,15 @@ import { MeasurementUnits } from '../../constants/units/index.js'
 
 import InputLabel from '@material-ui/core/InputLabel'
 
-String.prototype.isEmpty = function() {
-    return (this.length === 0 || !this.trim());
+
+const isEmpty = function(value) {
+    return (value.length === 0 || !value.trim());
 };
 
 function validatePositive(value) {
   let error
 
-  if(value.isEmpty()) {
+  if(isEmpty(value)) {
     error = "Empty value"
   } else if(isNaN(value)) {
     error = "Value is not a number"
@@ -52,7 +53,7 @@ function validateNotBlank(value) {
 
   if(value === undefined) {
     error = "Value required"
-  } else if(value.isEmpty()) {
+  } else if(isEmpty(value)) {
     error = "Value required"
   }
   return error
