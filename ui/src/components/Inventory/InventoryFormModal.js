@@ -15,7 +15,9 @@ import { MeasurementUnits } from '../../constants/units/index.js'
 import InputLabel from '@material-ui/core/InputLabel'
 
 
-
+const isEmpty = function(value) {
+    return (value.length === 0 || !value.trim());
+  };
 
 function validatePositive(value) {
   let error
@@ -55,10 +57,6 @@ function validateNotBlank(value) {
   }
   return error
 }
-
-const isEmpty = function(value) {
-    return (value.length === 0 || !value.trim());
-  };
 
 
 class InventoryFormModal extends React.Component {
