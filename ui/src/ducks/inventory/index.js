@@ -6,6 +6,7 @@ import { openSuccess } from '../alerts/index'
 const actions = {
   INVENTORY_GET_ALL: 'inventory/get_all',
   INVENTORY_GET_ALL_PENDING: 'inventory/get_all_PENDING',
+  INVENTORY_GET_BY_ID: 'inventory/retrieveInventory',
   INVENTORY_SAVE: 'inventory/save',
   INVENTORY_DELETE: 'inventory/delete',
   INVENTORY_REFRESH: 'inventory/refresh'
@@ -22,6 +23,18 @@ export const findInventory = createAction(actions.INVENTORY_GET_ALL, () =>
     .get(`${config.restAPIUrl}/inventory`)
     .then((suc) => dispatch(refreshInventory(suc.data)))
 )
+
+
+export const retrieveById = createAction(actions.INVENTORY_GET_BY_ID, () => 
+  (dispatch, getState, config) => axios
+    .get(`${config.restAPIUrl}/retrieveInventory`)
+    .then((suc) => {
+      console.log("retrieveById Duck id: " + suc.data.id)
+      console.log("retrieveById Duck Name: " + suc.data.name)
+    })
+
+)
+
 
 export const saveInventory = createAction(actions.INVENTORY_SAVE, (inventory) =>
   (dispatch, getState, config) => axios

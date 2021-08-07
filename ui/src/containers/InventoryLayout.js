@@ -71,6 +71,9 @@ const InventoryLayout = (props) => {
   const removeInventory = useCallback(ids => { dispatch(inventoryDuck.removeInventory(ids)) }, [dispatch])
   const saveInventory = useCallback(inventory => { dispatch(inventoryDuck.saveInventory(inventory)) }, [dispatch])
 
+  const retrieveInventory = useCallback(ids => { dispatch(inventoryDuck.retrieveById(ids)) }, [dispatch])
+
+
 
   useEffect(() => {
     if (!isFetched) {
@@ -155,6 +158,7 @@ const InventoryLayout = (props) => {
   }
 
   const updateEmptyValues = () => {
+    console.log("updating empty values")
     emptyValues.amount = 0
     emptyValues.averagePrice = 0
     emptyValues.bestBeforeDate = today
@@ -168,10 +172,18 @@ const InventoryLayout = (props) => {
     return emptyValues
   }
 
-  const testPrint = (values) => {
-    console.log("Edit initial values")
-    console.log(values)
-    return values
+  const testPrint = () => {
+    console.log("WE SALUTE YOU")
+  }
+
+  const testDuck = (id) => {
+    console.log("In testDuck with id:" + id + ":end id")
+    if(id != null && id != ""){
+      console.log("before retrieveById")
+      dispatch(inventoryDuck.retrieveById("test"))  
+      console.log("after retrieveById")    
+    }
+
   }
 
   const convertIdToValues = (id) => {
@@ -195,7 +207,9 @@ const InventoryLayout = (props) => {
 
 
   return (
+
     <Grid container>
+
       <Grid item xs={12}>
         <EnhancedTableToolbar
           numSelected={selected.length}
@@ -218,7 +232,7 @@ const InventoryLayout = (props) => {
           isDialogOpen={isEditOpen}
           handleDialog={toggleModals}
           handleInventory={saveInventory}
-          initialValues={convertIdToValues(selected)}
+          initialValues={testDuck(selected)}
         />
         <InventoryDeleteModal
           isDialogOpen={isDeleteOpen}

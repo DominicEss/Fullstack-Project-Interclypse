@@ -83,8 +83,6 @@ class InventoryFormModal extends React.Component {
             const formattedDate = moment(date).toISOString()
             values.bestBeforeDate = formattedDate
 
-            values.products = null
-
             handleInventory(values)
             handleDialog(true)
           }}>

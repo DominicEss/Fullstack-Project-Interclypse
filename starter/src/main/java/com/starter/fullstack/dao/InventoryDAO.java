@@ -84,16 +84,14 @@ public class InventoryDAO  {
    * @param id Inventory id to Retrieve.
    * @return Found Inventory.
    */
-  /*
   public Optional<Inventory> retrieve(String id) {
     Inventory foundInventory = null;
     foundInventory = mongoTemplate.findById(id, Inventory.class);
     
-    Optional<Inventory> optDeletedInv = Optional.ofNullable(foundInventory);
+    Optional<Inventory> optFoundInv = Optional.ofNullable(foundInventory);
  
-    return optDeletedInv;
+    return optFoundInv;
   }
-  */
 
   /**
    * Update Inventory.
