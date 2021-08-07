@@ -54,8 +54,8 @@ public class InventoryController {
    * @param id Inventory id to Retrieve.
    * @return Found Inventory.
    */
-  @GetMapping("/retrieveInventory")
-  public Inventory retrieveInventoryById() {
+  @GetMapping(value = "/retrieveInventory")
+  public Inventory retrieveInventoryById(@RequestBody String id) {
     System.out.println("In inventoryController retrieve by id with id: ");
 
     /*Optional<Inventory> optInv = this.inventoryDAO.retrieve(id);

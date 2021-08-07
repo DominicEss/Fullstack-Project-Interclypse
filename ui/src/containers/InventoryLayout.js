@@ -68,10 +68,12 @@ const InventoryLayout = (props) => {
   const products = useSelector(state => state.products.all)
   const inventory = useSelector(state => state.inventory.all)
   const isFetched = useSelector(state => state.inventory.fetched && state.products.fetched)
-  const removeInventory = useCallback(ids => { dispatch(inventoryDuck.removeInventory(ids)) }, [dispatch])
+  const removeInventory = useCallback(ids => { console.log("removeInventory id:", ids)
+                                                 dispatch(inventoryDuck.removeInventory(ids)) }, [dispatch])
   const saveInventory = useCallback(inventory => { dispatch(inventoryDuck.saveInventory(inventory)) }, [dispatch])
 
-  const retrieveInventory = useCallback(ids => { dispatch(inventoryDuck.retrieveById(ids)) }, [dispatch])
+  const retrieveInventory = useCallback(id => {  console.log("retrieveInventory id:", id)
+                                                  dispatch(inventoryDuck.retrieveById(id)) }, [dispatch])
 
 
 
@@ -172,43 +174,23 @@ const InventoryLayout = (props) => {
     return emptyValues
   }
 
-  const testPrint = () => {
-    console.log("WE SALUTE YOU")
-  }
 
   const testDuck = (id) => {
     console.log("In testDuck with id:" + id + ":end id")
     if(id != null && id != ""){
       console.log("before retrieveById")
-      dispatch(inventoryDuck.retrieveById("test"))  
+      retrieveInventory(id[0])
       console.log("after retrieveById")    
     }
 
   }
 
-  const convertIdToValues = (id) => {
-    for( let i = 0, l = inventory.length; i < l; i++){
-      if( id == inventory[i].id ) {
-        emptyValues.amount = inventory[i].amount
-        emptyValues.averagePrice = inventory[i].averagePrice
-        emptyValues.bestBeforeDate = inventory[i].bestBeforeDate.slice(0,10)
-        emptyValues.description = inventory[i].description
-        emptyValues.id = inventory[i].id
-        emptyValues.name = inventory[i].name
-        emptyValues.productType = inventory[i].productType
-        emptyValues.products = getProductNames()
-        emptyValues.unitOfMeasurement = inventory[i].unitOfMeasurement
-      //  emptyValues.version = 1
-      }
-    }
-
-    return emptyValues
-  }
-
 
   return (
 
+
     <Grid container>
+    {console.log("InventoryLayout Props", props)}
 
       <Grid item xs={12}>
         <EnhancedTableToolbar

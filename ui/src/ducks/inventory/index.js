@@ -25,9 +25,9 @@ export const findInventory = createAction(actions.INVENTORY_GET_ALL, () =>
 )
 
 
-export const retrieveById = createAction(actions.INVENTORY_GET_BY_ID, () => 
+export const retrieveById = createAction(actions.INVENTORY_GET_BY_ID, (id) => 
   (dispatch, getState, config) => axios
-    .get(`${config.restAPIUrl}/retrieveInventory`)
+    .get(`${config.restAPIUrl}/retrieveInventory`, {data: id})
     .then((suc) => {
       console.log("retrieveById Duck id: " + suc.data.id)
       console.log("retrieveById Duck Name: " + suc.data.name)
