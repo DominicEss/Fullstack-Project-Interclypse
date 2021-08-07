@@ -75,6 +75,7 @@ class InventoryFormModal extends React.Component {
       >
         <Formik
           initialValues={initialValues}
+          validateOnMount={true}
           onSubmit={values => {
             values.products = null
             const date = values.bestBeforeDate
@@ -203,7 +204,7 @@ class InventoryFormModal extends React.Component {
                   type='submit'
                   form={formName}
                   color='secondary'
-                  disabled={!helpers.dirty}>
+                  disabled={!helpers.isValid}>
                   Save
                 </Button>
 
