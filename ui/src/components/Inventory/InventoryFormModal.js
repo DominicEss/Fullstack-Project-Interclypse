@@ -8,15 +8,15 @@ import InputAdornment from '@material-ui/core/InputAdornment';
 import MenuItem from '@material-ui/core/MenuItem'
 import React from 'react'
 import TextField from '../Form/TextField'
-import CheckBox from '../Form/Checkbox'
+//import Checkbox from '../Form/Checkbox'
 import { Field, Form, Formik } from 'formik'
 import moment from 'moment'
 import { MeasurementUnits } from '../../constants/units/index.js'
 import InputLabel from '@material-ui/core/InputLabel'
-
+import Checkbox from '@material-ui/core/Checkbox';
 
 const isEmpty = function(value) {
-    return (value.length === 0 || !value.trim());
+    return (value.length === 0);
   };
 
 function validatePositive(value) {
@@ -59,6 +59,7 @@ function validateNotBlank(value) {
 }
 
 
+
 class InventoryFormModal extends React.Component {
   render() {
     const {
@@ -75,6 +76,7 @@ class InventoryFormModal extends React.Component {
         fullWidth={true}
         onClose={() => { handleDialog(false) }}
       >
+      {console.log("inventory form modal", initialValues)}
         <Formik
           initialValues={initialValues}
           onSubmit={values => {
@@ -189,9 +191,8 @@ class InventoryFormModal extends React.Component {
                   <Grid item xs={12} sm={12}>
                     <InputLabel id="never-expires-label">Never Expires?</InputLabel>
                     <Field
-                      name="neverExpires"
-                      label="neverExpires"
-                      component={CheckBox}
+                      as={Checkbox}
+                      name='neverExpires'
                      />
                   </Grid>
                 </Grid>
@@ -208,7 +209,9 @@ class InventoryFormModal extends React.Component {
                   disabled={!helpers.dirty}>
                   Save
                 </Button>
+                
               </DialogActions>
+
             </Form>
           }
         </Formik>

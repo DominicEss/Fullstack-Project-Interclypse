@@ -9,8 +9,8 @@ const actions = {
   INVENTORY_GET_BY_ID: 'inventory/retrieveInventory',
   INVENTORY_SAVE: 'inventory/save',
   INVENTORY_DELETE: 'inventory/delete',
-  INVENTORY_REFRESH: 'inventory/refresh'
-
+  INVENTORY_REFRESH: 'inventory/refresh',
+  INVENTORY_UPDATE: 'inventory/update'
 }
 
 export let defaultState = {
@@ -27,12 +27,36 @@ export const findInventory = createAction(actions.INVENTORY_GET_ALL, () =>
 
 export const retrieveById = createAction(actions.INVENTORY_GET_BY_ID, (id) => 
   (dispatch, getState, config) => axios
-    .get(`${config.restAPIUrl}/retrieveInventory`, {data: id})
-    .then((suc) => {
-      console.log("retrieveById Duck id: " + suc.data.id)
-      console.log("retrieveById Duck Name: " + suc.data.name)
+    .get(`${config.restAPIUrl}/retrieveInventory/`, { params: { id: id } })
+    .then((response) => {
+      console.log("retrive by Id data: " , response.data);
+      return response.data;
     })
 
+)
+
+
+export const updateInventory = createAction(actions.INVENTORY_UPDATE, (inventory) =>
+  (dispatch, getState, config) => axios
+    .post(`${config.restAPIUrl}/update`, inventory)
+    .then((suc) => {
+      console.log("In update inventory")
+
+      const invs = []
+      getState().inventory.all.forEach(inv => {
+        console.log("comparing inv.id: " + inv.id + " with suc.data.id: " + suc.data.id)
+        if (inv.id !== suc.data.id) {
+          invs.push(inv)
+        }
+        else {
+          console.log("\n\n Found Match \n\n")
+        }
+      })
+      
+      invs.push(suc.data)
+      dispatch(openSuccess(suc.data.name + " successfully updated"))
+      dispatch(refreshInventory(invs))
+  })
 )
 
 
@@ -58,6 +82,10 @@ export const saveInventory = createAction(actions.INVENTORY_SAVE, (inventory) =>
       dispatch(refreshInventory(invs))
   })
 )
+
+
+
+
 
 export const removeInventory = createAction(actions.INVENTORY_DELETE, (ids) =>
   (dispatch, getState, config) => axios

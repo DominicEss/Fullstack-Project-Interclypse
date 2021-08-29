@@ -5,7 +5,7 @@ import java.time.Instant;
 import java.util.List;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
-import lombok.Data;
+import lombok.Data; // getter & setters
 import org.springframework.data.annotation.Version;
 
 /**
@@ -27,6 +27,6 @@ public class Inventory {
   private BigDecimal amount;
   private UnitOfMeasurement unitOfMeasurement;
   private Instant bestBeforeDate;
-  private boolean neverExpires;
+  private Boolean neverExpires;
   private List<String> availableStores;
 }

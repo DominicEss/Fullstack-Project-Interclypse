@@ -58,23 +58,9 @@ public class InventoryDAO  {
    * @return Created/Updated Inventory.
    */
   public Inventory create(Inventory inventory) {
-    // set id to NULL
-    //inventory.setId(null);
+    inventory.setId(null);
 
-    System.out.println("In InventoryDAO create " + inventory.getId());
-
-    //Query query = new Query(Criteria.where("_id").is(inventory.getId()));
-    Update update = new Update().set( "name", inventory.getName())
-                                .set( "productType", inventory.getProductType())
-                                .set( "description", inventory.getDescription())
-                                .set( "averagePrice", inventory.getAveragePrice())
-                                .set( "amount", inventory.getAmount())
-                                .set( "unitOfMeasurement", inventory.getUnitOfMeasurement())
-                                .set( "bestBeforeDate", inventory.getBestBeforeDate());
-                             //   .set( "neverExpires", inventory.neverExpires());
-
-    // insert inventory object into database
-    mongoTemplate.upsert(query(where("_id").is(inventory.getId())), update, Inventory.class);
+    mongoTemplate.insert(inventory);
 
     return inventory;
   }
@@ -85,6 +71,8 @@ public class InventoryDAO  {
    * @return Found Inventory.
    */
   public Optional<Inventory> retrieve(String id) {
+    System.out.println("In Invnetory DAO with id: " + id);
+    
     Inventory foundInventory = null;
     foundInventory = mongoTemplate.findById(id, Inventory.class);
     
@@ -100,10 +88,30 @@ public class InventoryDAO  {
    * @return Updated Inventory.
    */
   public Optional<Inventory> update(String id, Inventory inventory) {
-    //Inventory user = mongoTemplate.findOne(query(where("_id").is(id)), Inventory.class);
+
+    Query query = new Query(Criteria.where("_id").is(id));
+
+    Update update = new Update().set( "name", inventory.getName())
+                                .set( "productType", inventory.getProductType())
+                                .set( "description", inventory.getDescription())
+                                .set( "averagePrice", inventory.getAveragePrice())
+                                .set( "amount", inventory.getAmount())
+                                .set( "unitOfMeasurement", inventory.getUnitOfMeasurement())
+                                .set( "bestBeforeDate", inventory.getBestBeforeDate())
+                                .set( "neverExpires", inventory.getNeverExpires());
+
+
     
 
-    return Optional.empty();
+    Inventory foundInventory = null;
+    mongoTemplate.upsert(query(where("_id").is(id)), update, Inventory.class);
+    
+
+    Optional<Inventory> optFoundInv = Optional.ofNullable(inventory);
+ 
+    return optFoundInv;
+
+
   }
 
   /**

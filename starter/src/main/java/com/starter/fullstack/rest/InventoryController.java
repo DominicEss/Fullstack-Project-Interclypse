@@ -6,11 +6,16 @@ import java.util.List;
 import java.util.Optional;
 import javax.validation.Valid;
 import org.springframework.util.Assert;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
  * Inventory Controller.
@@ -50,22 +55,43 @@ public class InventoryController {
 
 
   /**
+   * update Inventory
+   * @param inventory inventory 
+   * @return inventory
+   */
+  @PostMapping(value = "/update")
+  public Inventory update(@Valid @RequestBody Inventory inventory) {
+    Optional<Inventory> optInv = this.inventoryDAO.update(inventory.getId(), inventory);
+
+    if (optInv.isEmpty()) {
+      System.out.println("Couldn't find inventory");
+      return null;
+    }
+
+    System.out.println("Found inventory" + optInv.get());
+    return optInv.get(); 
+  }
+
+
+  /**
    * Retrieve Inventory.
    * @param id Inventory id to Retrieve.
    * @return Found Inventory.
    */
-  @GetMapping(value = "/retrieveInventory")
-  public Inventory retrieveInventoryById(@RequestBody String id) {
-    System.out.println("In inventoryController retrieve by id with id: ");
+  @GetMapping(value = "/retrieveInventory/")
+  @ResponseBody
+  public Inventory retrieveInventoryById(@RequestParam String id){
+    System.out.println("In inventoryController retrieve by id with id: " + id );
 
-    /*Optional<Inventory> optInv = this.inventoryDAO.retrieve(id);
+    Optional<Inventory> optInv = this.inventoryDAO.retrieve(id);
 
     if (optInv.isEmpty()) {
+      System.out.println("Couldn't find inventory");
       return null;
     }
 
-    return optInv.get();  */
-    return null;
+    System.out.println("Found inventory" + optInv.get());
+    return optInv.get(); 
   }
 
  /**
