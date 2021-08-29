@@ -6,16 +6,14 @@ import java.util.List;
 import java.util.Optional;
 import javax.validation.Valid;
 import org.springframework.util.Assert;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
+
 
 /**
  * Inventory Controller.
@@ -64,11 +62,8 @@ public class InventoryController {
     Optional<Inventory> optInv = this.inventoryDAO.update(inventory.getId(), inventory);
 
     if (optInv.isEmpty()) {
-      System.out.println("Couldn't find inventory");
       return null;
     }
-
-    System.out.println("Found inventory" + optInv.get());
     return optInv.get(); 
   }
 
@@ -80,17 +75,13 @@ public class InventoryController {
    */
   @GetMapping(value = "/retrieveInventory/")
   @ResponseBody
-  public Inventory retrieveInventoryById(@RequestParam String id){
-    System.out.println("In inventoryController retrieve by id with id: " + id );
+  public Inventory retrieveInventoryById(@RequestParam String id) {
 
     Optional<Inventory> optInv = this.inventoryDAO.retrieve(id);
 
     if (optInv.isEmpty()) {
-      System.out.println("Couldn't find inventory");
       return null;
     }
-
-    System.out.println("Found inventory" + optInv.get());
     return optInv.get(); 
   }
 

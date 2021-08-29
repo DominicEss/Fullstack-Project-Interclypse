@@ -5,8 +5,10 @@ import java.time.Instant;
 import java.util.List;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
-import lombok.Data; // getter & setters
+import lombok.Data; 
 import org.springframework.data.annotation.Version;
+
+// lombok.Data handles all getters & setters
 
 /**
  * Inventory.

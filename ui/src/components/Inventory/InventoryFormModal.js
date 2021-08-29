@@ -8,7 +8,6 @@ import InputAdornment from '@material-ui/core/InputAdornment';
 import MenuItem from '@material-ui/core/MenuItem'
 import React from 'react'
 import TextField from '../Form/TextField'
-//import Checkbox from '../Form/Checkbox'
 import { Field, Form, Formik } from 'formik'
 import moment from 'moment'
 import { MeasurementUnits } from '../../constants/units/index.js'
@@ -47,9 +46,7 @@ function validateQuantity(value) {
 
 function validateNotBlank(value) {
   let error
-  console.log("validateNotBlank")
-  console.log("value: " + value)
-
+  
   if(value === undefined) {
     error = "Value required"
   } else if(isEmpty(value)) {
@@ -76,7 +73,6 @@ class InventoryFormModal extends React.Component {
         fullWidth={true}
         onClose={() => { handleDialog(false) }}
       >
-      {console.log("inventory form modal", initialValues)}
         <Formik
           initialValues={initialValues}
           onSubmit={values => {
@@ -209,7 +205,7 @@ class InventoryFormModal extends React.Component {
                   disabled={!helpers.dirty}>
                   Save
                 </Button>
-                
+
               </DialogActions>
 
             </Form>

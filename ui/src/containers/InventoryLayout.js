@@ -87,7 +87,6 @@ const InventoryLayout = (props) => {
   const [orderBy, setOrderBy] = React.useState('calories')
   
   const [selected, setSelected] = React.useState([])
-  //const [checked] = React.useState([])
   const [defaultValues, updateDefaultValues] = React.useState(emptyValues)
   const [editValues, updateEditValues] = React.useState(emptyValues)
 
@@ -96,21 +95,15 @@ const InventoryLayout = (props) => {
 
 
 
-
+  // updates the edit values when new inventory objects are selected
   useEffect(() => { 
    async function fetch() {
-     console.log("Selected ids:", selected)
      if( selected.length === 1 && selected !== null){
        let promise = dispatch(inventoryDuck.retrieveById(selected[0])).payload
-     
-       console.log("Results: ", promise)
-     
+
        promise.then( results => {
          results.products = products.map(x=>x.name)
          results.bestBeforeDate = results.bestBeforeDate.slice(0, 10)
-         
-         console.log("Setting edit values to: ", results)
-
          updateEditValues(results)
        })
      }
@@ -124,16 +117,11 @@ const InventoryLayout = (props) => {
 
 
 
-
+  // updates empty default values for the create modal when the product list is changed
   useEffect(() => {
-    console.log("updating default values")
-    console.log("productName test", products.map(x=>x.name))
-  
     updateDefaultValues(values=> {
       return { ...values, products: products.map(x=>x.name) }
     })
-
-    //console.log("new values", defaultValues)
   }, [products])
 
 
@@ -196,33 +184,10 @@ const InventoryLayout = (props) => {
     }
   }
 
-
-/*
-  async function testDuck (id) {
-    console.log("In testDuck with id:" + id + ":end id")
-    if(id != null && id != ""){
-      let promise = await dispatch(inventoryDuck.retrieveById(id[0])).payload
-      console.log("Results: ", promise)
- 
-      //return promise;
-
-      promise.then( results => {
-          //results.products = getProductNames()
-          console.log("Updated Results: ", results)
-          return results
-        }
-        )
- 
-    }
-  }
-
-  */
   return (
 
 
     <Grid container>
-    {console.log("InventoryLayout Props", props)}
-
       <Grid item xs={12}>
         <EnhancedTableToolbar
           numSelected={selected.length}
