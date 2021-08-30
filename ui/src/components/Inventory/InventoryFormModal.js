@@ -46,7 +46,7 @@ function validateQuantity(value) {
 
 function validateNotBlank(value) {
   let error
-  
+
   if(value === undefined) {
     error = "Value required"
   } else if(isEmpty(value)) {
@@ -89,6 +89,7 @@ class InventoryFormModal extends React.Component {
               autoComplete='off'
               id={formName}
             >
+            {console.log("Formik initial values: ", initialValues)}
               <DialogTitle id='alert-dialog-title'>
                 {`${title} Inventory`}
               </DialogTitle>
