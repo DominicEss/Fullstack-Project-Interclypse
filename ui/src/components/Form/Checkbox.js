@@ -1,6 +1,5 @@
 import { getIn } from 'formik'
 import MuiCheckbox from '@material-ui/core/Checkbox'
-import Checkbox from '@material-ui/core/Checkbox'
 import React from 'react'
 
 const fieldToCheckbox = ({

@@ -3,40 +3,30 @@ import Dialog from '@material-ui/core/Dialog'
 import DialogActions from '@material-ui/core/DialogActions'
 import DialogContent from '@material-ui/core/DialogContent'
 import DialogTitle from '@material-ui/core/DialogTitle'
-import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Grid from '@material-ui/core/Grid'
 import InputAdornment from '@material-ui/core/InputAdornment';
 import MenuItem from '@material-ui/core/MenuItem'
 import React from 'react'
 import TextField from '../Form/TextField'
 import CheckBox from '../Form/Checkbox'
-import { useField, useFormikContext, Field, Form, Formik } from 'formik'
+import { Field, Form, Formik } from 'formik'
 import moment from 'moment'
 import { MeasurementUnits } from '../../constants/units/index.js'
 
 import InputLabel from '@material-ui/core/InputLabel'
 
 
-let today = new Date().toISOString().slice(0, 10);
-
-const tempProducts = [ 
-  {
-    value: "Hops",
-    label: "Hops",
-  },
-  {
-    value: "Malt",
-    label: "Malt",
-  },
-
-]
-
+const isEmpty = function(value) {
+    return (value.length === 0 || !value.trim());
+};
 
 function validatePositive(value) {
   let error
 
-  if(!value) {
-    error = "Value required"
+  if(isEmpty(value)) {
+    error = "Empty value"
+  } else if(isNaN(value)) {
+    error = "Value is not a number"
   } else if (!(value >= 0)) {
     error = "Must be greater than or equal to zero"
   }
@@ -56,6 +46,19 @@ function validateQuantity(value) {
    return error
  }
 
+function validateNotBlank(value) {
+  let error
+  console.log("validateNotBlank")
+  console.log("value: " + value)
+
+  if(value === undefined) {
+    error = "Value required"
+  } else if(isEmpty(value)) {
+    error = "Value required"
+  }
+  return error
+}
+
 class InventoryFormModal extends React.Component {
   render() {
     const {
@@ -74,7 +77,9 @@ class InventoryFormModal extends React.Component {
       >
         <Formik
           initialValues={initialValues}
+          validateOnMount={true}
           onSubmit={values => {
+            values.products = null
             const date = values.bestBeforeDate
             const formattedDate = moment(date).toISOString()
             values.bestBeforeDate = formattedDate
@@ -97,7 +102,8 @@ class InventoryFormModal extends React.Component {
                       component={TextField}
                       custom={{ variant: 'outlined', fullWidth: true, }}
                       label='Name'
-                      name='name' 
+                      name='name'
+                      required
                     />
                   </Grid>
 
@@ -107,13 +113,16 @@ class InventoryFormModal extends React.Component {
                      custom={{ variant: 'outlined', fullWidth: true, }}
                      label='Product Type'
                      name='productType'
+                     required
                      select
+                     validate={validateNotBlank}
                    >
-                   {tempProducts.map((option) => (
-                     <MenuItem key={option.value} value={option.value}>
-                       {option.label}
+                   {initialValues.products.map((option) => (
+                     <MenuItem key={option} value={option}>
+                       {option}
                       </MenuItem>
                    ))}
+
                    </Field>
                   </Grid>
 
@@ -143,7 +152,6 @@ class InventoryFormModal extends React.Component {
                     <Field
                       component={TextField}
                       custom={{ variant: 'outlined', fullWidth: true, }}
-
                       label='Amount'
                       name='amount'
                       validate = {validateQuantity}  
@@ -157,6 +165,8 @@ class InventoryFormModal extends React.Component {
                       label="Unit of Measurement"
                       name='unitOfMeasurement'
                       select
+                      required
+                      validate = {validateNotBlank}
                     >
                       {Object.keys(MeasurementUnits).map((key) => (
                         <MenuItem key={key} value={key}>
@@ -195,7 +205,7 @@ class InventoryFormModal extends React.Component {
                   type='submit'
                   form={formName}
                   color='secondary'
-                  disabled={!helpers.dirty}>
+                  disabled={!helpers.isValid}>
                   Save
                 </Button>
               </DialogActions>
