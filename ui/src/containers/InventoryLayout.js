@@ -14,20 +14,22 @@ import TableCell from '@material-ui/core/TableCell'
 import TableContainer from '@material-ui/core/TableContainer'
 import TableRow from '@material-ui/core/TableRow'
 import { EnhancedTableHead, EnhancedTableToolbar, getComparator, stableSort } from '../components/Table'
-import React, { useCallback, useEffect } from 'react'
+import React, { useCallback, useEffect} from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
-let today = new Date().toISOString().slice(0, 10);
+let today = new Date().toISOString().slice(0, 10)
 
-let emptyValues = {
+const emptyValues = {
   amount: "0",
   averagePrice: "0",
   bestBeforeDate: today,
   description: '"',
-  unitOfMeasurement: "",
+  id: "",
   name: "",
   products: null,
   productType: "",
+  unitOfMeasurement: "",
+  version: 0,
 }
 
 
@@ -68,6 +70,8 @@ const InventoryLayout = (props) => {
   const isFetched = useSelector(state => state.inventory.fetched && state.products.fetched)
   const removeInventory = useCallback(ids => { dispatch(inventoryDuck.removeInventory(ids)) }, [dispatch])
   const saveInventory = useCallback(inventory => { dispatch(inventoryDuck.saveInventory(inventory)) }, [dispatch])
+  const updateInventory = useCallback(inventory => { dispatch(inventoryDuck.updateInventory(inventory)) }, [dispatch])
+
 
 
   useEffect(() => {
@@ -77,10 +81,51 @@ const InventoryLayout = (props) => {
     }
   }, [dispatch, isFetched])
 
+
   const normalizedInventory = normalizeInventory(inventory)
   const [order, setOrder] = React.useState('asc')
   const [orderBy, setOrderBy] = React.useState('calories')
+  
   const [selected, setSelected] = React.useState([])
+  const [defaultValues, updateDefaultValues] = React.useState(emptyValues)
+  const [editValues, updateEditValues] = React.useState(emptyValues)
+
+
+
+
+
+
+  // updates the edit values when new inventory objects are selected
+  useEffect(() => { 
+   async function fetch() {
+     if( selected.length === 1 && selected !== null){
+       let promise = dispatch(inventoryDuck.retrieveById(selected[0])).payload
+
+       promise.then( results => {
+         results.products = products.map(x=>x.name)
+         results.bestBeforeDate = results.bestBeforeDate.slice(0, 10)
+         updateEditValues(results)
+       })
+     }
+    }
+
+   fetch()
+  
+  }, [selected, products, dispatch])
+
+
+
+
+
+  // updates empty default values for the create modal when the product list is changed
+  useEffect(() => {
+    updateDefaultValues(values=> {
+      return { ...values, products: products.map(x=>x.name) }
+    })
+  }, [products])
+
+
+
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc'
@@ -138,23 +183,10 @@ const InventoryLayout = (props) => {
       setSelected([])
     }
   }
-  const [checked] = React.useState([])
-  
-
-  const updateProducts = () => {
-    let productNames = []
-
-    for( let i = 0, l = products.length; i < l; i++){
-      productNames[i] = products[i].name
-    }
-    emptyValues.products = productNames
-    emptyValues.productType = ""
-    
-    return emptyValues
-  }
-
 
   return (
+
+
     <Grid container>
       <Grid item xs={12}>
         <EnhancedTableToolbar
@@ -170,15 +202,15 @@ const InventoryLayout = (props) => {
           isDialogOpen={isCreateOpen}
           handleDialog={toggleModals}
           handleInventory={saveInventory}
-          initialValues={updateProducts()}
+          initialValues={defaultValues}
         />
         <InventoryFormModal
           title='Edit'
           formName='inventoryEdit'
           isDialogOpen={isEditOpen}
           handleDialog={toggleModals}
-          handleInventory={saveInventory}
-          initialValues={checked[0]}
+          handleInventory={updateInventory}
+          initialValues={editValues}
         />
         <InventoryDeleteModal
           isDialogOpen={isDeleteOpen}
