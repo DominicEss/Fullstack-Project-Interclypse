@@ -90,7 +90,6 @@ class InventoryFormModal extends React.Component {
               autoComplete='off'
               id={formName}
             >
-            {console.log("Formik initial values: ", initialValues)}
               <DialogTitle id='alert-dialog-title'>
                 {`${title} Inventory`}
               </DialogTitle>
@@ -191,6 +190,7 @@ class InventoryFormModal extends React.Component {
                     <Field
                       as={Checkbox}
                       name='neverExpires'
+                      type="checkbox"
                      />
                   </Grid>
                 </Grid>

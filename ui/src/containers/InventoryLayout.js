@@ -26,6 +26,7 @@ const emptyValues = {
   description: '"',
   id: "",
   name: "",
+  neverExpires: false,
   products: null,
   productType: "",
   unitOfMeasurement: "",
