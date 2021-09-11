@@ -8,17 +8,15 @@ import InputAdornment from '@material-ui/core/InputAdornment';
 import MenuItem from '@material-ui/core/MenuItem'
 import React from 'react'
 import TextField from '../Form/TextField'
-import CheckBox from '../Form/Checkbox'
 import { Field, Form, Formik } from 'formik'
 import moment from 'moment'
 import { MeasurementUnits } from '../../constants/units/index.js'
-
 import InputLabel from '@material-ui/core/InputLabel'
-
+import Checkbox from '@material-ui/core/Checkbox';
 
 const isEmpty = function(value) {
-    return (value.length === 0 || !value.trim());
-};
+    return (value.length === 0);
+  };
 
 function validatePositive(value) {
   let error
@@ -48,8 +46,6 @@ function validateQuantity(value) {
 
 function validateNotBlank(value) {
   let error
-  console.log("validateNotBlank")
-  console.log("value: " + value)
 
   if(value === undefined) {
     error = "Value required"
@@ -58,6 +54,8 @@ function validateNotBlank(value) {
   }
   return error
 }
+
+
 
 class InventoryFormModal extends React.Component {
   render() {
@@ -83,6 +81,7 @@ class InventoryFormModal extends React.Component {
             const date = values.bestBeforeDate
             const formattedDate = moment(date).toISOString()
             values.bestBeforeDate = formattedDate
+
             handleInventory(values)
             handleDialog(true)
           }}>
@@ -189,9 +188,9 @@ class InventoryFormModal extends React.Component {
                   <Grid item xs={12} sm={12}>
                     <InputLabel id="never-expires-label">Never Expires?</InputLabel>
                     <Field
-                      name="neverExpires"
-                      label="neverExpires"
-                      component={CheckBox}
+                      as={Checkbox}
+                      name='neverExpires'
+                      type="checkbox"
                      />
                   </Grid>
                 </Grid>
@@ -208,7 +207,9 @@ class InventoryFormModal extends React.Component {
                   disabled={!helpers.isValid}>
                   Save
                 </Button>
+
               </DialogActions>
+
             </Form>
           }
         </Formik>
