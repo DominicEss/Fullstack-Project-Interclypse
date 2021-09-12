@@ -18,7 +18,6 @@ import React, { useCallback, useEffect} from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import Loader from '../components/Loader/Loader'
 
-
 let today = new Date().toISOString().slice(0, 10)
 
 const emptyValues = {
@@ -89,16 +88,19 @@ const InventoryLayout = (props) => {
 
 
   useEffect(() => {
-    setLoading(true)
-
-    console.log("start fetching")
+   async function fetch(){
     if (!isFetched) {
-      dispatch(inventoryDuck.findInventory())
-      dispatch(productDuck.findProducts())
+      setLoading(true)
+      
+      let promise1 = dispatch(inventoryDuck.findInventory()).payload
+      let promise2 = dispatch(productDuck.findProducts()).payload
+
+      Promise.allSettled([promise1,promise2]).then( () => setLoading(false) )
     }
-    console.log("end fetching")
-     
-    setLoading(false)
+   }
+
+  fetch()
+
   }, [dispatch, isFetched])
 
 
