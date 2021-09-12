@@ -16,6 +16,8 @@ import TableRow from '@material-ui/core/TableRow'
 import { EnhancedTableHead, EnhancedTableToolbar, getComparator, stableSort } from '../components/Table'
 import React, { useCallback, useEffect} from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import Loader from '../components/Loader/Loader'
+
 
 let today = new Date().toISOString().slice(0, 10)
 
@@ -75,14 +77,6 @@ const InventoryLayout = (props) => {
 
 
 
-  useEffect(() => {
-    if (!isFetched) {
-      dispatch(inventoryDuck.findInventory())
-      dispatch(productDuck.findProducts())
-    }
-  }, [dispatch, isFetched])
-
-
   const normalizedInventory = normalizeInventory(inventory)
   const [order, setOrder] = React.useState('asc')
   const [orderBy, setOrderBy] = React.useState('calories')
@@ -90,7 +84,22 @@ const InventoryLayout = (props) => {
   const [selected, setSelected] = React.useState([])
   const [defaultValues, updateDefaultValues] = React.useState(emptyValues)
   const [editValues, updateEditValues] = React.useState(emptyValues)
+  const [isLoading, setLoading] = React.useState(true)
 
+
+
+  useEffect(() => {
+    setLoading(true)
+
+    console.log("start fetching")
+    if (!isFetched) {
+      dispatch(inventoryDuck.findInventory())
+      dispatch(productDuck.findProducts())
+    }
+    console.log("end fetching")
+     
+    setLoading(false)
+  }, [dispatch, isFetched])
 
 
 
@@ -185,7 +194,7 @@ const InventoryLayout = (props) => {
     }
   }
 
-  return (
+  return ( isLoading ? <Loader/> :(
 
 
     <Grid container>
@@ -233,7 +242,8 @@ const InventoryLayout = (props) => {
               headCells={headCells}
             />
             <TableBody>
-              {stableSort(normalizedInventory, getComparator(order, orderBy))
+              { 
+                stableSort(normalizedInventory, getComparator(order, orderBy))
                 .map(inv => {
                   const isItemSelected = isSelected(inv.id)
                   return (
@@ -256,14 +266,16 @@ const InventoryLayout = (props) => {
                       <TableCell align='right'>{inv.unitOfMeasurement}</TableCell>
                       <TableCell align='right'>{inv.bestBeforeDate}</TableCell>
                     </TableRow>
+
                   )
+
                 })}
             </TableBody>
           </Table>
         </TableContainer>
       </Grid>
     </Grid>
-  )
+  ))
 }
 
 export default InventoryLayout
