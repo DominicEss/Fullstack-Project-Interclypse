@@ -16,7 +16,7 @@ import TableRow from '@material-ui/core/TableRow'
 import { EnhancedTableHead, EnhancedTableToolbar, getComparator, stableSort } from '../components/Table'
 import React, { useCallback, useEffect} from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import Loader from '../components/Loader/Loader'
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 let today = new Date().toISOString().slice(0, 10)
 
@@ -196,9 +196,8 @@ const InventoryLayout = (props) => {
     }
   }
 
-  return ( isLoading ? <Loader/> :(
-
-
+  return ( isLoading ? <CircularProgress color='secondary' style={{ position: 'absolute', 
+                        left: '50%', top: '50%', display:'block'}}/> :(
     <Grid container>
       <Grid item xs={12}>
         <EnhancedTableToolbar
@@ -244,8 +243,7 @@ const InventoryLayout = (props) => {
               headCells={headCells}
             />
             <TableBody>
-              { 
-                stableSort(normalizedInventory, getComparator(order, orderBy))
+              { stableSort(normalizedInventory, getComparator(order, orderBy))
                 .map(inv => {
                   const isItemSelected = isSelected(inv.id)
                   return (
