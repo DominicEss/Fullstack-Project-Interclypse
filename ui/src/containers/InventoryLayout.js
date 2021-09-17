@@ -83,7 +83,7 @@ const InventoryLayout = (props) => {
   const [selected, setSelected] = React.useState([])
   const [defaultValues, updateDefaultValues] = React.useState(emptyValues)
   const [editValues, updateEditValues] = React.useState(emptyValues)
-  const [isLoading, setLoading] = React.useState(true)
+  const [isLoading, setLoading] = React.useState(false)
 
 
 
