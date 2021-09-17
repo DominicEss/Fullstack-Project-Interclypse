@@ -196,8 +196,7 @@ const InventoryLayout = (props) => {
     }
   }
 
-  return ( isLoading ? <CircularProgress color='secondary' style={{ position: 'absolute', 
-                        left: '50%', top: '50%', display:'block'}}/> :(
+  return ( isLoading ? <CircularProgress color='secondary' /> :(
     <Grid container>
       <Grid item xs={12}>
         <EnhancedTableToolbar

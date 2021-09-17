@@ -6,7 +6,7 @@ import { makeStyles } from '@material-ui/core/styles'
 import Snackbar from '@material-ui/core/Snackbar'
 import { useDarkMode } from '../hooks'
 import { withTheme } from '@material-ui/core/styles'
-import { createMuiTheme, MuiThemeProvider } from '@material-ui/core/styles'
+import { createTheme, MuiThemeProvider } from '@material-ui/core/styles'
 import { darkTheme, lightTheme } from '../themes'
 import React, { Children } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -91,7 +91,7 @@ const DesignLayout = (props) => {
           </IconButton>,
         ]}
       />
-      <MuiThemeProvider theme={createMuiTheme(themeMode)}>
+      <MuiThemeProvider theme={createTheme(themeMode)}>
         <CssBaseline/>
         <div id="main" className={classes.content}>
           { Children.map(children, child =>
