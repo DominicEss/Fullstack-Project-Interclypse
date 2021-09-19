@@ -16,6 +16,7 @@ import TableRow from '@material-ui/core/TableRow'
 import { EnhancedTableHead, EnhancedTableToolbar, getComparator, stableSort } from '../components/Table'
 import React, { useCallback, useEffect} from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 let today = new Date().toISOString().slice(0, 10)
 
@@ -75,14 +76,6 @@ const InventoryLayout = (props) => {
 
 
 
-  useEffect(() => {
-    if (!isFetched) {
-      dispatch(inventoryDuck.findInventory())
-      dispatch(productDuck.findProducts())
-    }
-  }, [dispatch, isFetched])
-
-
   const normalizedInventory = normalizeInventory(inventory)
   const [order, setOrder] = React.useState('asc')
   const [orderBy, setOrderBy] = React.useState('calories')
@@ -90,7 +83,25 @@ const InventoryLayout = (props) => {
   const [selected, setSelected] = React.useState([])
   const [defaultValues, updateDefaultValues] = React.useState(emptyValues)
   const [editValues, updateEditValues] = React.useState(emptyValues)
+  const [isLoading, setLoading] = React.useState(false)
 
+
+
+  useEffect(() => {
+   async function fetch(){
+    if (!isFetched) {
+      setLoading(true)
+      
+      let promise1 = dispatch(inventoryDuck.findInventory()).payload
+      let promise2 = dispatch(productDuck.findProducts()).payload
+
+      Promise.allSettled([promise1,promise2]).then( () => setLoading(false) )
+    }
+   }
+
+  fetch()
+
+  }, [dispatch, isFetched])
 
 
 
@@ -185,9 +196,7 @@ const InventoryLayout = (props) => {
     }
   }
 
-  return (
-
-
+  return ( isLoading ? <CircularProgress color='secondary' /> :(
     <Grid container>
       <Grid item xs={12}>
         <EnhancedTableToolbar
@@ -233,7 +242,7 @@ const InventoryLayout = (props) => {
               headCells={headCells}
             />
             <TableBody>
-              {stableSort(normalizedInventory, getComparator(order, orderBy))
+              { stableSort(normalizedInventory, getComparator(order, orderBy))
                 .map(inv => {
                   const isItemSelected = isSelected(inv.id)
                   return (
@@ -256,14 +265,16 @@ const InventoryLayout = (props) => {
                       <TableCell align='right'>{inv.unitOfMeasurement}</TableCell>
                       <TableCell align='right'>{inv.bestBeforeDate}</TableCell>
                     </TableRow>
+
                   )
+
                 })}
             </TableBody>
           </Table>
         </TableContainer>
       </Grid>
     </Grid>
-  )
+  ))
 }
 
 export default InventoryLayout
