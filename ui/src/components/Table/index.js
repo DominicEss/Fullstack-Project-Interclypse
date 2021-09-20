@@ -17,12 +17,17 @@ import Typography from '@material-ui/core/Typography'
 import { lighten, makeStyles } from '@material-ui/core/styles'
 
 export function stableSort(array, comparator) {
+  console.log("Stable Sort with array: ", array)
+  console.log("Stable Sort comparator: ", comparator)
+
   const stabilizedThis = array.map((el, index) => [el, index])
   stabilizedThis.sort((a, b) => {
     const order = comparator(a[0], b[0])
     if (order !== 0) return order
     return a[1] - b[1]
   })
+
+  console.log("Stable Sort Sorted: ", stabilizedThis)
   return stabilizedThis.map((el) => el[0])
 }
 
@@ -37,6 +42,7 @@ export function descendingComparator(a, b, orderBy) {
 }
 
 export function getComparator(order, orderBy) {
+  console.log("Comparator orderBy: ", orderBy)
   return order === 'desc'
     ? (a, b) => descendingComparator(a, b, orderBy)
     : (a, b) => -descendingComparator(a, b, orderBy)

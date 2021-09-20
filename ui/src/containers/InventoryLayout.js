@@ -104,6 +104,10 @@ const InventoryLayout = (props) => {
   }, [dispatch, isFetched])
 
 
+  // updates backend sorting
+  useEffect(() => {
+
+  }, [order, orderBy])
 
 
 
