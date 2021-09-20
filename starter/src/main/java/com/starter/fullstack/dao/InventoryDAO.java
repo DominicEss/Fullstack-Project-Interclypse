@@ -11,6 +11,7 @@ import org.springframework.data.mongodb.core.index.IndexOperations;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.util.Assert;
 import static org.springframework.data.mongodb.core.query.Criteria.where;
+import org.springframework.data.mongodb.core.query.Query;
 import static org.springframework.data.mongodb.core.query.Query.query;
 
 
@@ -46,7 +47,13 @@ public class InventoryDAO  {
    * @return List of found Inventory.
    */
   public List<Inventory> findAll() {
-    return this.mongoTemplate.findAll(Inventory.class);
+    Query query = new Query();
+
+    query.with(Sort.by(Order(Sort.Direction.ASC, "_id")));
+
+    List<Inventory> myClassList=  mongoTemplate.find(query, Inventory.class);
+
+    return myClassList;
   }
 
   /**
