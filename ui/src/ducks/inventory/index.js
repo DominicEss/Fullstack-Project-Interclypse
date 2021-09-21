@@ -5,6 +5,7 @@ import { openSuccess } from '../alerts/index'
 
 const actions = {
   INVENTORY_GET_ALL: 'inventory/get_all',
+  INVENTORY_GET_SORTED: 'inventory/inventorySorted',
   INVENTORY_GET_ALL_PENDING: 'inventory/get_all_PENDING',
   INVENTORY_GET_BY_ID: 'inventory/retrieveInventory',
   INVENTORY_SAVE: 'inventory/save',
@@ -21,6 +22,13 @@ export let defaultState = {
 export const findInventory = createAction(actions.INVENTORY_GET_ALL, () => 
   (dispatch, getState, config) => axios
     .get(`${config.restAPIUrl}/inventory`)
+    .then((suc) => dispatch(refreshInventory(suc.data)))
+)
+
+
+export const findSorted = createAction(actions.INVENTORY_GET_SORTED, (sortVariable, direction) => 
+  (dispatch, getState, config) => axios
+    .get(`${config.restAPIUrl}/inventorySorted/`, { params: { sortVariable: sortVariable, direction: direction }})
     .then((suc) => dispatch(refreshInventory(suc.data)))
 )
 

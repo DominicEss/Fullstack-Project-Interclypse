@@ -106,6 +106,9 @@ const InventoryLayout = (props) => {
 
   // updates backend sorting
   useEffect(() => {
+    console.log("Order changed: ", order.toString())
+
+    dispatch(inventoryDuck.findSorted( orderBy.toString(), order.toString()))
 
   }, [order, orderBy])
 

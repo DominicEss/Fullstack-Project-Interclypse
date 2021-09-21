@@ -46,15 +46,39 @@ public class InventoryDAO  {
    * Find All Inventory.
    * @return List of found Inventory.
    */
-  public List<Inventory> findAll() {
+  public List<Inventory> findSorted(String sortVariable, String direction) {
+    
+    System.out.println("Sort Variable: " + sortVariable);
+    System.out.println("direction: " + direction);
+
     Query query = new Query();
 
-    query.with(Sort.by(Order(Sort.Direction.ASC, "_id")));
+    if(direction.equals("asc")){
+      System.out.println("asc sorted");
+      query.with(Sort.by(Sort.Direction.ASC, sortVariable));
+    }
+    else{
+      System.out.println("desc sorted");
+      query.with(Sort.by(Sort.Direction.DESC, sortVariable)); 
+    }
 
-    List<Inventory> myClassList=  mongoTemplate.find(query, Inventory.class);
+
+    List<Inventory> myClassList =  mongoTemplate.find(query, Inventory.class);
+
+    System.out.println("Sorted " + direction + " data by " + sortVariable + " " + myClassList);
 
     return myClassList;
   }
+
+
+    /**
+   * Find All Inventory.
+   * @return List of found Inventory.
+   */
+  public List<Inventory> findAll() {
+    return this.mongoTemplate.findAll(Inventory.class);
+  }
+
 
   /**
    * Save Inventory.
