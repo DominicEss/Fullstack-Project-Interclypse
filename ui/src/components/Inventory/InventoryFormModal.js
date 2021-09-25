@@ -153,7 +153,7 @@ class InventoryFormModal extends React.Component {
                       custom={{ variant: 'outlined', fullWidth: true, }}
                       label='Amount'
                       name='amount'
-                      validate = {validateQuantity}  
+                      validate = {validatePositive}  
                    />
                   </Grid>
     

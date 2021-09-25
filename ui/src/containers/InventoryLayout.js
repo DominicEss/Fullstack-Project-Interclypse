@@ -21,8 +21,8 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 let today = new Date().toISOString().slice(0, 10)
 
 const emptyValues = {
-  amount: "0",
-  averagePrice: "0",
+  amount: 0,
+  averagePrice: 0,
   bestBeforeDate: today,
   description: '"',
   id: "",
@@ -110,7 +110,7 @@ const InventoryLayout = (props) => {
 
     dispatch(inventoryDuck.findSorted( orderBy.toString(), order.toString()))
 
-  }, [order, orderBy])
+  }, [dispatch, order, orderBy])
 
 
 
@@ -250,8 +250,7 @@ const InventoryLayout = (props) => {
               headCells={headCells}
             />
             <TableBody>
-              { stableSort(normalizedInventory, getComparator(order, orderBy))
-                .map(inv => {
+              { normalizedInventory.map(inv => {
                   const isItemSelected = isSelected(inv.id)
                   return (
                     <TableRow
