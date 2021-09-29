@@ -3,7 +3,6 @@ package com.starter.fullstack.rest;
 import com.starter.fullstack.api.Inventory;
 import com.starter.fullstack.dao.InventoryDAO;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import javax.validation.Valid;
 import org.springframework.util.Assert;
@@ -45,18 +44,13 @@ public class InventoryController {
 
   /**
    * Find Inventory.
+   * @param sortVariable variable to sort by
+   * @param direction direction to sort in
    * @return List of Inventory.
    */
   @GetMapping("/inventorySorted/")
-  public List<Inventory> findSortedInventories(@RequestParam String sortVariable, @RequestParam String direction ) {
-    List<Inventory> debug = this.inventoryDAO.findSorted(sortVariable, direction);
-    System.out.println("InventoryController list: ");
-    debug.forEach(element -> {
-      System.out.println("Name: " + element.getName() + "Amount: \"" + element.getAmount() + "\"");
-      }
-      );
-
-    return debug;
+  public List<Inventory> findSortedInventories(@RequestParam String sortVariable, @RequestParam String direction) {
+    return this.inventoryDAO.findSorted(sortVariable, direction);
   }
 
 

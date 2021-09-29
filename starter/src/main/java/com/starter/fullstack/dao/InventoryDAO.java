@@ -8,10 +8,11 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.index.Index;
 import org.springframework.data.mongodb.core.index.IndexOperations;
+import org.springframework.data.mongodb.core.query.Collation;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.util.Assert;
 import static org.springframework.data.mongodb.core.query.Criteria.where;
-import org.springframework.data.mongodb.core.query.Query;
 import static org.springframework.data.mongodb.core.query.Query.query;
 
 
@@ -22,6 +23,7 @@ public class InventoryDAO  {
   private final MongoTemplate mongoTemplate;
   private static final String NAME = "name";
   private static final String PRODUCT_TYPE = "productType";
+  private static final String ASC = "asc";
 
   /**
    * Default Constructor.
@@ -44,29 +46,22 @@ public class InventoryDAO  {
 
   /**
    * Find All Inventory.
+   * @param sortVariable variable to sort by
+   * @param direction direction to sort in
    * @return List of found Inventory.
    */
   public List<Inventory> findSorted(String sortVariable, String direction) {
-    
-    System.out.println("Sort Variable: " + sortVariable);
-    System.out.println("direction: " + direction);
-
     Query query = new Query();
 
-    if(direction.equals("asc")){
-      System.out.println("asc sorted");
-      query.with(Sort.by(Sort.Direction.ASC, sortVariable));
-    }
-    else{
-      System.out.println("desc sorted");
-      query.with(Sort.by(Sort.Direction.DESC, sortVariable)); 
-    }
+    Collation collation = Collation.of("en").numericOrderingEnabled();
 
+    if (direction.equals(ASC)) {
+      query.with(Sort.by(Sort.Direction.ASC, sortVariable)).collation(collation);
+    } else {
+      query.with(Sort.by(Sort.Direction.DESC, sortVariable)).collation(collation);
+    }
 
     List<Inventory> myClassList =  mongoTemplate.find(query, Inventory.class);
-
-    System.out.println("Sorted " + direction + " data by " + sortVariable + " " + myClassList);
-
     return myClassList;
   }
 

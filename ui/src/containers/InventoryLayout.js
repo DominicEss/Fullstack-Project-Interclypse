@@ -13,7 +13,7 @@ import TableBody from '@material-ui/core/TableBody'
 import TableCell from '@material-ui/core/TableCell'
 import TableContainer from '@material-ui/core/TableContainer'
 import TableRow from '@material-ui/core/TableRow'
-import { EnhancedTableHead, EnhancedTableToolbar, getComparator, stableSort } from '../components/Table'
+import { EnhancedTableHead, EnhancedTableToolbar } from '../components/Table'
 import React, { useCallback, useEffect} from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import CircularProgress from '@material-ui/core/CircularProgress';
@@ -106,10 +106,7 @@ const InventoryLayout = (props) => {
 
   // updates backend sorting
   useEffect(() => {
-    console.log("Order changed: ", order.toString())
-
     dispatch(inventoryDuck.findSorted( orderBy.toString(), order.toString()))
-
   }, [dispatch, order, orderBy])
 
 

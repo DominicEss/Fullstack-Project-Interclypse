@@ -22,23 +22,15 @@ export let defaultState = {
 export const findInventory = createAction(actions.INVENTORY_GET_ALL, () => 
   (dispatch, getState, config) => axios
     .get(`${config.restAPIUrl}/inventory`)
-    .then((suc) => {
-      dispatch(refreshInventory(suc.data))
-  })
-)
-
-
-    /*
     .then((suc) => dispatch(refreshInventory(suc.data)))
 )
-*/
+
+
 
 export const findSorted = createAction(actions.INVENTORY_GET_SORTED, (sortVariable, direction) => 
   (dispatch, getState, config) => axios
     .get(`${config.restAPIUrl}/inventorySorted/`, { params: { sortVariable: sortVariable, direction: direction }})
     .then((suc) => {
-      console.log("ducks data:" , JSON.parse(suc.request.response))
-      suc.data = JSON.parse(suc.request.response)
       dispatch(refreshInventory(JSON.parse(suc.request.response)))
   })
 )
