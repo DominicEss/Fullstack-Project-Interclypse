@@ -5,6 +5,7 @@ import { openSuccess } from '../alerts/index'
 
 const actions = {
   INVENTORY_GET_ALL: 'inventory/get_all',
+  INVENTORY_GET_SORTED: 'inventory/inventorySorted',
   INVENTORY_GET_ALL_PENDING: 'inventory/get_all_PENDING',
   INVENTORY_GET_BY_ID: 'inventory/retrieveInventory',
   INVENTORY_SAVE: 'inventory/save',
@@ -23,6 +24,18 @@ export const findInventory = createAction(actions.INVENTORY_GET_ALL, () =>
     .get(`${config.restAPIUrl}/inventory`)
     .then((suc) => dispatch(refreshInventory(suc.data)))
 )
+
+
+
+export const findSorted = createAction(actions.INVENTORY_GET_SORTED, (sortVariable, direction) => 
+  (dispatch, getState, config) => axios
+    .get(`${config.restAPIUrl}/inventorySorted/`, { params: { sortVariable: sortVariable, direction: direction }})
+    .then((suc) => {
+      dispatch(refreshInventory(JSON.parse(suc.request.response)))
+  })
+)
+
+
 
 
 export const retrieveById = createAction(actions.INVENTORY_GET_BY_ID, (id) => 
@@ -105,7 +118,7 @@ export const removeInventory = createAction(actions.INVENTORY_DELETE, (ids) =>
 
 export const refreshInventory = createAction(actions.INVENTORY_REFRESH, (payload) =>
   (dispatcher, getState, config) =>
-    payload.sort((inventoryA, inventoryB) => inventoryA.name < inventoryB.name ? -1 : inventoryA.name > inventoryB.name ? 1 : 0)
+    payload
 )
 
 

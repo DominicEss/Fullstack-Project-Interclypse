@@ -32,18 +32,6 @@ function validatePositive(value) {
 }
 
 
-function validateQuantity(value) {
-   let hasDecimal = (value - Math.floor(value)) !== 0;
-
-   let error
-   if (hasDecimal) {
-      error = "Must be a whole number"
-   } else {
-      error = validatePositive(value)
-   }
-   return error
- }
-
 function validateNotBlank(value) {
   let error
 
@@ -153,7 +141,7 @@ class InventoryFormModal extends React.Component {
                       custom={{ variant: 'outlined', fullWidth: true, }}
                       label='Amount'
                       name='amount'
-                      validate = {validateQuantity}  
+                      validate = {validatePositive}  
                    />
                   </Grid>
     

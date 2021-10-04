@@ -17,6 +17,7 @@ import Typography from '@material-ui/core/Typography'
 import { lighten, makeStyles } from '@material-ui/core/styles'
 
 export function stableSort(array, comparator) {
+
   const stabilizedThis = array.map((el, index) => [el, index])
   stabilizedThis.sort((a, b) => {
     const order = comparator(a[0], b[0])

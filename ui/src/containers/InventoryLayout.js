@@ -13,7 +13,7 @@ import TableBody from '@material-ui/core/TableBody'
 import TableCell from '@material-ui/core/TableCell'
 import TableContainer from '@material-ui/core/TableContainer'
 import TableRow from '@material-ui/core/TableRow'
-import { EnhancedTableHead, EnhancedTableToolbar, getComparator, stableSort } from '../components/Table'
+import { EnhancedTableHead, EnhancedTableToolbar } from '../components/Table'
 import React, { useCallback, useEffect} from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import CircularProgress from '@material-ui/core/CircularProgress';
@@ -21,8 +21,8 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 let today = new Date().toISOString().slice(0, 10)
 
 const emptyValues = {
-  amount: "0",
-  averagePrice: "0",
+  amount: 0,
+  averagePrice: 0,
   bestBeforeDate: today,
   description: '"',
   id: "",
@@ -104,6 +104,10 @@ const InventoryLayout = (props) => {
   }, [dispatch, isFetched])
 
 
+  // updates backend sorting
+  useEffect(() => {
+    dispatch(inventoryDuck.findSorted( orderBy.toString(), order.toString()))
+  }, [dispatch, order, orderBy])
 
 
 
@@ -243,8 +247,7 @@ const InventoryLayout = (props) => {
               headCells={headCells}
             />
             <TableBody>
-              { stableSort(normalizedInventory, getComparator(order, orderBy))
-                .map(inv => {
+              { normalizedInventory.map(inv => {
                   const isItemSelected = isSelected(inv.id)
                   return (
                     <TableRow
