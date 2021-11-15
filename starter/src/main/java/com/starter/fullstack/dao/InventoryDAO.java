@@ -1,6 +1,7 @@
 package com.starter.fullstack.dao;
 
 import com.starter.fullstack.api.Inventory;
+import com.starter.fullstack.api.UnitOfMeasurement;
 import java.util.List;
 import java.util.Optional;
 import javax.annotation.PostConstruct;
@@ -10,7 +11,9 @@ import org.springframework.data.mongodb.core.index.Index;
 import org.springframework.data.mongodb.core.index.IndexOperations;
 import org.springframework.data.mongodb.core.query.Collation;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Update;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.util.Assert;
 import static org.springframework.data.mongodb.core.query.Criteria.where;
 import static org.springframework.data.mongodb.core.query.Query.query;
@@ -100,6 +103,57 @@ public class InventoryDAO  {
     Optional<Inventory> optFoundInv = Optional.ofNullable(foundInventory);
  
     return optFoundInv;
+  }
+
+
+  /**
+   * Retrieve Inventory.
+   * @param filterTerm Term to filter on. Options:
+   *                                    -bestBeforeDate
+   *                                    -unitOfMeasurement
+   *                                    -amount
+   * @param filterType Filter options. Specific options for parameters:
+   *                                    -bestBeforeDate -> lt, gt, is
+   *                                    -unitOfMeasurement -> c, gal, oz, pt, lb, qt
+   *                                    -amount -> lt, gt, is
+   * @return Found Inventory.
+   */
+  public List<Inventory> filterRetrieve(String filterTerm, String filterType, String filterValue) {
+    List<Inventory> foundInventory = null;
+
+    Criteria criteria = new Criteria();
+
+    switch (filterType) {
+
+      case "lt":
+        criteria = where(filterTerm).lt(filterValue);
+        break;
+
+      case "gt":
+        criteria = where(filterTerm).gt(filterValue);
+        break;
+
+      case "is":
+        criteria = where(filterTerm).is(filterValue);
+        break;
+
+      // can either be a unitOfMeasurement or garbage at this point
+      default:
+        // if the filterType doesn't have a valid unit of measurement, 
+        // then it is not a valid request
+        if (!UnitOfMeasurement.contains(filterType)) {
+          return null;
+        }
+    }
+
+    Query query = new Query();
+    query.addCriteria(criteria);
+
+    foundInventory = mongoTemplate.find(query, Inventory.class);
+
+    
+    
+    return foundInventory;
   }
 
   /**
