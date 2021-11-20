@@ -10,8 +10,8 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.index.Index;
 import org.springframework.data.mongodb.core.index.IndexOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.util.Assert;
 import static org.springframework.data.mongodb.core.query.Criteria.where;
 import static org.springframework.data.mongodb.core.query.Query.query;
@@ -32,6 +32,7 @@ public class InventoryDAO  {
   public InventoryDAO(MongoTemplate mongoTemplate) {
     Assert.notNull(mongoTemplate, "MongoTemplate must not be null.");
     this.mongoTemplate = mongoTemplate;
+    System.out.println("\n\n\n MongoTemplate \n\n\n\n" + mongoTemplate.getCollectionNames() + "\n\n\n");
   }
 
   /**
@@ -81,7 +82,7 @@ public class InventoryDAO  {
 
 
   /**
-   * Retrieve Inventory.
+   * Filter Retrieve Inventory.
    * @param filterTerm Term to filter on. Options:
    *                                    -bestBeforeDate
    *                                    -unitOfMeasurement
@@ -90,6 +91,10 @@ public class InventoryDAO  {
    *                                    -bestBeforeDate -> lt, gt, is
    *                                    -unitOfMeasurement -> c, gal, oz, pt, lb, qt
    *                                    -amount -> lt, gt, is
+   * @param filterValue Filter value. Value to filter with:
+   *                                    -bestBeforeDate -> date to compare against
+   *                                    -unitOfMeasurement -> 0 since it doesn't matter
+   *                                    -amount -> value to compare against
    * @return Found Inventory.
    */
   public List<Inventory> filterRetrieve(String filterTerm, String filterType, String filterValue) {
