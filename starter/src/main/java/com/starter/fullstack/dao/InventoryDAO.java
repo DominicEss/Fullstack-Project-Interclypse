@@ -10,7 +10,6 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.index.Index;
 import org.springframework.data.mongodb.core.index.IndexOperations;
 import org.springframework.data.mongodb.core.query.Collation;
-import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
@@ -149,14 +148,21 @@ public class InventoryDAO  {
         if (!UnitOfMeasurement.contains(filterType)) {
           return null;
         }
+        criteria = where(filterTerm).is(filterType);
     }
 
+
+    Collation collation = Collation.of("en").numericOrderingEnabled();
+
     Query query = new Query();
+    query.collation(collation);
+
     query.addCriteria(criteria);
+
 
     foundInventory = mongoTemplate.find(query, Inventory.class);
 
-    
+
     
     return foundInventory;
   }
