@@ -35,7 +35,6 @@ public class InventoryDAO  {
   public InventoryDAO(MongoTemplate mongoTemplate) {
     Assert.notNull(mongoTemplate, "MongoTemplate must not be null.");
     this.mongoTemplate = mongoTemplate;
-    System.out.println("\n\n\n MongoTemplate \n\n\n\n" + mongoTemplate.getCollectionNames() + "\n\n\n");
   }
 
   /**
@@ -76,8 +75,6 @@ public class InventoryDAO  {
    */
   public List<Inventory> findAll() {
     List<Inventory> testInv = this.mongoTemplate.findAll(Inventory.class);
-    
-    System.out.println("\n\n\n Database Data: \n\n" + testInv + "\n\n\n");
 
     return testInv;
   }
@@ -92,8 +89,6 @@ public class InventoryDAO  {
     inventory.setId(null);
 
     mongoTemplate.insert(inventory);
-
-    System.out.println("\n\n\nInsterting inventory with date: " + inventory.getBestBeforeDate() + "\n\n\n");
 
     return inventory;
   }

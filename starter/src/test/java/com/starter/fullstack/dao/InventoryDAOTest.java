@@ -4,15 +4,11 @@ import com.starter.fullstack.api.Inventory;
 import com.starter.fullstack.api.UnitOfMeasurement;
 import com.starter.fullstack.config.EmbedMongoClientOverrideConfig;
 import java.math.BigDecimal;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-import java.util.TimeZone;
 import javax.annotation.Resource;
 import org.junit.After;
 import org.junit.Assert;
@@ -156,19 +152,13 @@ public class InventoryDAOTest {
 
     List<Inventory> filteredList;
 
-    System.out.println("\n\n\nDatabase Data \n\n\n" + this.mongoTemplate.findAll(Inventory.class) + "\n\n\n");
-
-
 
     // Test bestBeforeDate
     for (int i = 0; i < DATES.length; i++) {
       Instant currentDate = DATES[i];
-      System.out.println("\n\n\n Date string: " + currentDate);
 
       // FILTER_OPTIONS[0] == is   FILTER TERMS[0] == "bestBeforeDate"
       filteredList = this.inventoryDAO.filterRetrieve(FILTER_TERMS[0], FILTER_OPTIONS[0], currentDate);
-
-      System.out.println("\n\n\n Testing Date[" + i + "] is: " + filteredList.size() + " Should be: 1\n\n\n");
 
       // There is only one of each amount in the list
       Assert.assertTrue(filteredList.size() == 1);
@@ -177,9 +167,6 @@ public class InventoryDAOTest {
 
       // FILTER_OPTIONS[1] == lt   FILTER TERMS[0] == "bestBeforeDate"
       filteredList = this.inventoryDAO.filterRetrieve(FILTER_TERMS[0], FILTER_OPTIONS[1], currentDate);
-
-      System.out.println("\n\n\n Testing Date[" + i + "] lt: " + filteredList.size() + " Should be: " + i + "\n\n\n");
-      System.out.println(filteredList);
 
       // Since the list is full of ascending numbers in order without repeats,
       // the ith index will have i values less than it
@@ -190,14 +177,11 @@ public class InventoryDAOTest {
       // FILTER_OPTIONS[2] == gt   FILTER TERMS[0] == "bestBeforeDate"
       filteredList = this.inventoryDAO.filterRetrieve(FILTER_TERMS[0], FILTER_OPTIONS[2], currentDate);
 
-      System.out.println("\n\n\n Testing Date[" + i + "] gt: " + filteredList.size() +
-                         " Should be: " + (NUMS.length - i - 1) + "\n\n\n");
 
       // Since the list is full of ascending numbers in order without repeats,
       // the ith index will have (length of list - i - 1)  values greater than it
       //                                      *note* -1 to exclude the ith index
       Assert.assertTrue(filteredList.size() == (NUMS.length - i - 1));
-
     }
 
 
@@ -224,61 +208,26 @@ public class InventoryDAOTest {
       // FILTER_OPTIONS[0] == is   FILTER TERMS_2 == "amount"
       filteredList = this.inventoryDAO.filterRetrieve(FILTER_TERMS[2], FILTER_OPTIONS[0], currentNumber);
 
-      System.out.println("\n\n\n Testing amount[" + i + "] is: " + filteredList.size() + " Should be: 1\n\n\n");
-
       // There is only one of each amount in the list
       Assert.assertTrue(filteredList.size() == 1);
 
-
-
       // FILTER_OPTIONS[1] == lt   FILTER TERMS_2 == "amount"
       filteredList = this.inventoryDAO.filterRetrieve(FILTER_TERMS[2], FILTER_OPTIONS[1], currentNumber);
-
-      System.out.println("\n\n\n Testing amount[" + i + "] lt: " + filteredList.size() + " Should be: " + i + "\n\n\n");
-      System.out.println(filteredList);
 
       // Since the list is full of ascending numbers in order without repeats,
       // the ith index will have i values less than it
       Assert.assertTrue(filteredList.size() == i);
 
-
-
       // FILTER_OPTIONS[2] == gt   FILTER TERMS_2 == "amount"
       filteredList = this.inventoryDAO.filterRetrieve(FILTER_TERMS[2], FILTER_OPTIONS[2], currentNumber);
-
-      System.out.println("\n\n\n Testing amount[" + i + "] gt: " + filteredList.size() + 
-                         " Should be: " + (NUMS.length - i - 1) + "\n\n\n");
 
       // Since the list is full of ascending numbers in order without repeats,
       // the ith index will have (length of list - i - 1)  values greater than it
       //                                      *note* -1 to exclude the ith index
       Assert.assertTrue(filteredList.size() == (NUMS.length - i - 1));
-
-
-
-      
     }
 
 
 
   }
-
-
-
-
-
-
-  /**
-   *  format date to database string format 
-   *  @param date date to be converted
-   *  
-   *  @return String date converted to database format
-   */
-  private String formatToISODate(Date date) {
-    TimeZone tz = TimeZone.getTimeZone("UTC");
-    DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
-    //df.setTimeZone(tz);
-    return df.format(date);
-  }
-
 }
