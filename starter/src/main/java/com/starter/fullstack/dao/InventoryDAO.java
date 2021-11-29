@@ -2,6 +2,7 @@ package com.starter.fullstack.dao;
 
 import com.starter.fullstack.api.Inventory;
 import com.starter.fullstack.api.UnitOfMeasurement;
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import javax.annotation.PostConstruct;
@@ -74,7 +75,11 @@ public class InventoryDAO  {
    * @return List of found Inventory.
    */
   public List<Inventory> findAll() {
-    return this.mongoTemplate.findAll(Inventory.class);
+    List<Inventory> testInv = this.mongoTemplate.findAll(Inventory.class);
+    
+    System.out.println("\n\n\n Database Data: \n\n" + testInv + "\n\n\n");
+
+    return testInv;
   }
 
 
@@ -87,6 +92,8 @@ public class InventoryDAO  {
     inventory.setId(null);
 
     mongoTemplate.insert(inventory);
+
+    System.out.println("\n\n\nInsterting inventory with date: " + inventory.getBestBeforeDate() + "\n\n\n");
 
     return inventory;
   }
@@ -109,15 +116,12 @@ public class InventoryDAO  {
   /**
    * Filter Retrieve Inventory.
    * @param filterTerm Term to filter on. Options:
-   *                                    -bestBeforeDate
    *                                    -unitOfMeasurement
    *                                    -amount
    * @param filterType Filter options. Specific options for parameters:
-   *                                    -bestBeforeDate -> lt, gt, is
    *                                    -unitOfMeasurement -> c, gal, oz, pt, lb, qt
    *                                    -amount -> lt, gt, is
    * @param filterValue Filter value. Value to filter with:
-   *                                    -bestBeforeDate -> date to compare against
    *                                    -unitOfMeasurement -> 0 since it doesn't matter
    *                                    -amount -> value to compare against
    * @return Found Inventory.
@@ -166,6 +170,64 @@ public class InventoryDAO  {
     
     return foundInventory;
   }
+
+
+
+
+
+
+  /**
+   * Filter Retrieve Inventory.
+   * @param filterTerm Term to filter on. Options:
+   *                                    -bestBeforeDate
+   * @param filterType Filter options. Specific options for parameters:
+   *                                    -lt, gt, is
+   * @param filterValue Filter value. Value to filter with:
+   *                                    -Instant date to compare against
+   * @return Found Inventory.
+   */
+  public List<Inventory> filterRetrieve(String filterTerm, String filterType, Instant filterValue) {
+    List<Inventory> foundInventory = null;
+
+    Criteria criteria = new Criteria();
+
+    switch (filterType) {
+
+      case "lt":
+        criteria = where(filterTerm).lt(filterValue);
+        break;
+
+      case "gt":
+        criteria = where(filterTerm).gt(filterValue);
+        break;
+
+      case "is":
+        criteria = where(filterTerm).is(filterValue);
+        break;
+
+      default:
+        return null;
+    }
+
+    Collation collation = Collation.of("en").numericOrderingEnabled();
+
+    Query query = new Query();
+    query.collation(collation);
+
+    query.addCriteria(criteria);
+
+
+    foundInventory = mongoTemplate.find(query, Inventory.class);
+
+    
+    return foundInventory;
+
+  }
+
+
+
+
+
 
   /**
    * Update Inventory.

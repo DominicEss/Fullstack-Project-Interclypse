@@ -40,9 +40,12 @@ public class InventoryDAOTest {
   private final BigDecimal[] NUMS = {BigDecimal.valueOf(0), BigDecimal.valueOf(1),  
                                      BigDecimal.valueOf(5), BigDecimal.valueOf(14),
                                      BigDecimal.valueOf(15), BigDecimal.valueOf(24)};
-  private final Instant[] DATES = { Instant.now(), Instant.now().plus(1, ChronoUnit.DAYS),
-                                    Instant.now().plus(2, ChronoUnit.DAYS), Instant.now().plus(3, ChronoUnit.DAYS),
-                                    Instant.now().plus(4, ChronoUnit.DAYS), Instant.now().plus(5, ChronoUnit.DAYS) };
+  private final Instant[] DATES = { Instant.now().truncatedTo(ChronoUnit.SECONDS),
+                                    Instant.now().plus(1, ChronoUnit.DAYS).truncatedTo(ChronoUnit.SECONDS),
+                                    Instant.now().plus(2, ChronoUnit.DAYS).truncatedTo(ChronoUnit.SECONDS),
+                                    Instant.now().plus(3, ChronoUnit.DAYS).truncatedTo(ChronoUnit.SECONDS),
+                                    Instant.now().plus(4, ChronoUnit.DAYS).truncatedTo(ChronoUnit.SECONDS),
+                                    Instant.now().plus(5, ChronoUnit.DAYS).truncatedTo(ChronoUnit.SECONDS) };
   private final String[] FILTER_TERMS = { "bestBeforeDate", "unitOfMeasurement", "amount" };
   private final String[] FILTER_OPTIONS = { "is", "lt", "gt" };
 
@@ -146,7 +149,7 @@ public class InventoryDAOTest {
       inventory.setUnitOfMeasurement(MeasurementUnits.get(i));
       inventory.setBestBeforeDate(DATES[i]);
 
-      this.mongoTemplate.save(inventory);
+      this.inventoryDAO.create(inventory);
     }
 
     // At this point, the database is loaded with one of each type of amount, measurement unit, & dates
@@ -159,13 +162,13 @@ public class InventoryDAOTest {
 
     // Test bestBeforeDate
     for (int i = 0; i < DATES.length; i++) {
-      String currentDate = formatToISODate(Date.from(DATES[i]));
+      Instant currentDate = DATES[i];
       System.out.println("\n\n\n Date string: " + currentDate);
 
       // FILTER_OPTIONS[0] == is   FILTER TERMS[0] == "bestBeforeDate"
       filteredList = this.inventoryDAO.filterRetrieve(FILTER_TERMS[0], FILTER_OPTIONS[0], currentDate);
 
-      System.out.println("\n\n\n Testing Date["+ i + "] is: " + filteredList.size() + " Should be: 1\n\n\n");
+      System.out.println("\n\n\n Testing Date[" + i + "] is: " + filteredList.size() + " Should be: 1\n\n\n");
 
       // There is only one of each amount in the list
       Assert.assertTrue(filteredList.size() == 1);
@@ -175,7 +178,7 @@ public class InventoryDAOTest {
       // FILTER_OPTIONS[1] == lt   FILTER TERMS[0] == "bestBeforeDate"
       filteredList = this.inventoryDAO.filterRetrieve(FILTER_TERMS[0], FILTER_OPTIONS[1], currentDate);
 
-      System.out.println("\n\n\n Testing Date["+ i + "] lt: " + filteredList.size() + " Should be: " + i + "\n\n\n");
+      System.out.println("\n\n\n Testing Date[" + i + "] lt: " + filteredList.size() + " Should be: " + i + "\n\n\n");
       System.out.println(filteredList);
 
       // Since the list is full of ascending numbers in order without repeats,
@@ -187,7 +190,7 @@ public class InventoryDAOTest {
       // FILTER_OPTIONS[2] == gt   FILTER TERMS[0] == "bestBeforeDate"
       filteredList = this.inventoryDAO.filterRetrieve(FILTER_TERMS[0], FILTER_OPTIONS[2], currentDate);
 
-      System.out.println("\n\n\n Testing Date["+ i + "] gt: " + filteredList.size() +
+      System.out.println("\n\n\n Testing Date[" + i + "] gt: " + filteredList.size() +
                          " Should be: " + (NUMS.length - i - 1) + "\n\n\n");
 
       // Since the list is full of ascending numbers in order without repeats,
@@ -273,8 +276,8 @@ public class InventoryDAOTest {
    */
   private String formatToISODate(Date date) {
     TimeZone tz = TimeZone.getTimeZone("UTC");
-    DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.S'Z'");
-    df.setTimeZone(tz);
+    DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
+    //df.setTimeZone(tz);
     return df.format(date);
   }
 
