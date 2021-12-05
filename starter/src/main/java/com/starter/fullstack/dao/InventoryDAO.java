@@ -108,115 +108,30 @@ public class InventoryDAO  {
   }
 
 
-  /**
-   * Filter Retrieve Inventory.
-   * @param filterTerm Term to filter on. Options:
-   *                                    -unitOfMeasurement
-   *                                    -amount
-   * @param filterType Filter options. Specific options for parameters:
-   *                                    -unitOfMeasurement -> c, gal, oz, pt, lb, qt
-   *                                    -amount -> lt, gt, is
-   * @param filterValue Filter value. Value to filter with:
-   *                                    -unitOfMeasurement -> 0 since it doesn't matter
-   *                                    -amount -> value to compare against
-   * @return Found Inventory.
-   */
-  public List<Inventory> filterRetrieve(String filterTerm, String filterType, String filterValue) {
-    List<Inventory> foundInventory = null;
-
-    Criteria criteria = new Criteria();
-
-    switch (filterType) {
-
-      case "lt":
-        criteria = where(filterTerm).lt(filterValue);
-        break;
-
-      case "gt":
-        criteria = where(filterTerm).gt(filterValue);
-        break;
-
-      case "is":
-        criteria = where(filterTerm).is(filterValue);
-        break;
-
-      // can either be a unitOfMeasurement or garbage at this point
-      default:
-        // if the filterType doesn't have a valid unit of measurement, 
-        // then it is not a valid request
-        if (!UnitOfMeasurement.contains(filterType)) {
-          return null;
-        }
-        criteria = where(filterTerm).is(filterType);
-    }
-
-
-    Collation collation = Collation.of("en").numericOrderingEnabled();
-
-    Query query = new Query();
-    query.collation(collation);
-
-    query.addCriteria(criteria);
-
-
-    foundInventory = mongoTemplate.find(query, Inventory.class);
-
-
-    
-    return foundInventory;
-  }
-
-
-
-
 
 
   /**
    * Filter Retrieve Inventory.
-   * @param filterTerm Term to filter on. Options:
-   *                                    -bestBeforeDate
-   * @param filterType Filter options. Specific options for parameters:
-   *                                    -lt, gt, is
-   * @param filterValue Filter value. Value to filter with:
-   *                                    -Instant date to compare against
+   * @param measurementUnit Unit of measurement to filter on: c, gal, oz, pt, lb, qt
+   * @param amount Amount to look for. Will find specific amount given
+   * @param bestBeforeDate Best before date to look for. Will give products before date
    * @return Found Inventory.
    */
-  public List<Inventory> filterRetrieve(String filterTerm, String filterType, Instant filterValue) {
-    List<Inventory> foundInventory = null;
-
-    Criteria criteria = new Criteria();
-
-    switch (filterType) {
-
-      case "lt":
-        criteria = where(filterTerm).lt(filterValue);
-        break;
-
-      case "gt":
-        criteria = where(filterTerm).gt(filterValue);
-        break;
-
-      case "is":
-        criteria = where(filterTerm).is(filterValue);
-        break;
-
-      default:
-        return null;
-    }
-
-    Collation collation = Collation.of("en").numericOrderingEnabled();
+  public List<Inventory> filterRetrieve(Object measurementUnit, Object amount, Object bestBeforeDate) {
+    //Collation collation = Collation.of("en").numericOrderingEnabled();
 
     Query query = new Query();
-    query.collation(collation);
+    //query.collation(collation);
 
-    query.addCriteria(criteria);
+    //query.addCriteria(Criteria.where("unitOfMeasurement").is(measurementUnit));
+    //query.addCriteria(Criteria.where("amount").is(amount));
+    query.addCriteria(Criteria.where("bestBeforeDate").lt(bestBeforeDate));
 
+    List<Inventory> foundInventory = mongoTemplate.find(query, Inventory.class);
 
-    foundInventory = mongoTemplate.find(query, Inventory.class);
 
     
     return foundInventory;
-
   }
 
 

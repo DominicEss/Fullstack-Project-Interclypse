@@ -158,33 +158,26 @@ public class InventoryDAOTest {
       Instant currentDate = DATES[i];
 
       // FILTER_OPTIONS[0] == is   FILTER TERMS[0] == "bestBeforeDate"
-      filteredList = this.inventoryDAO.filterRetrieve(FILTER_TERMS[0], FILTER_OPTIONS[0], currentDate);
+      filteredList = this.inventoryDAO.filterRetrieve(null, null, currentDate);
+
+      System.out.println("\n\n\n TestBeforeDate list for date: " + currentDate + "\n" + filteredList);
 
       // There is only one of each amount in the list
-      Assert.assertTrue(filteredList.size() == 1);
+      //Assert.assertTrue(filteredList.size() == 1);
 
-
-
-      // FILTER_OPTIONS[1] == lt   FILTER TERMS[0] == "bestBeforeDate"
-      filteredList = this.inventoryDAO.filterRetrieve(FILTER_TERMS[0], FILTER_OPTIONS[1], currentDate);
-
+      // *******  THIS MIGHT BE THE ASSERTION I NEED ************8
       // Since the list is full of ascending numbers in order without repeats,
       // the ith index will have i values less than it
-      Assert.assertTrue(filteredList.size() == i);
-
-
-
-      // FILTER_OPTIONS[2] == gt   FILTER TERMS[0] == "bestBeforeDate"
-      filteredList = this.inventoryDAO.filterRetrieve(FILTER_TERMS[0], FILTER_OPTIONS[2], currentDate);
+      //Assert.assertTrue(filteredList.size() == i);
 
 
       // Since the list is full of ascending numbers in order without repeats,
       // the ith index will have (length of list - i - 1)  values greater than it
       //                                      *note* -1 to exclude the ith index
-      Assert.assertTrue(filteredList.size() == (NUMS.length - i - 1));
+      //Assert.assertTrue(filteredList.size() == (NUMS.length - i - 1));
     }
 
-
+/*
 
     // Test unitOfMeasurement
     for (int i = 0; i < UnitOfMeasurement.values().length; i++) {
@@ -227,7 +220,7 @@ public class InventoryDAOTest {
       Assert.assertTrue(filteredList.size() == (NUMS.length - i - 1));
     }
 
-
+*/
 
   }
 }
