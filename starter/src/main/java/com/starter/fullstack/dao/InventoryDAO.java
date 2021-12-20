@@ -1,8 +1,6 @@
 package com.starter.fullstack.dao;
 
 import com.starter.fullstack.api.Inventory;
-import com.starter.fullstack.api.UnitOfMeasurement;
-import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import javax.annotation.PostConstruct;
@@ -11,7 +9,6 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.index.Index;
 import org.springframework.data.mongodb.core.index.IndexOperations;
 import org.springframework.data.mongodb.core.query.Collation;
-import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.util.Assert;
@@ -118,20 +115,23 @@ public class InventoryDAO  {
    * @return Found Inventory.
    */
   public List<Inventory> filterRetrieve(Object measurementUnit, Object amount, Object bestBeforeDate) {
-    //Collation collation = Collation.of("en").numericOrderingEnabled();
-
     Query query = new Query();
-    //query.collation(collation);
 
-    //query.addCriteria(Criteria.where("unitOfMeasurement").is(measurementUnit));
-    //query.addCriteria(Criteria.where("amount").is(amount));
-    query.addCriteria(Criteria.where("bestBeforeDate").lt(bestBeforeDate));
-
-    List<Inventory> foundInventory = mongoTemplate.find(query, Inventory.class);
+    if (measurementUnit != null) {
+      query.addCriteria(where("unitOfMeasurement").is(measurementUnit));
+    }
 
 
-    
-    return foundInventory;
+    if (amount != null) {
+      query.addCriteria(where("amount").is(amount));
+    }
+
+
+    if (bestBeforeDate != null) {
+      query.addCriteria(where("bestBeforeDate").lt(bestBeforeDate));
+    }
+
+    return mongoTemplate.find(query, Inventory.class);
   }
 
 

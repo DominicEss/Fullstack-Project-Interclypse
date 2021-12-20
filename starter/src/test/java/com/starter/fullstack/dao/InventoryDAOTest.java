@@ -155,40 +155,31 @@ public class InventoryDAOTest {
 
     // Test bestBeforeDate
     for (int i = 0; i < DATES.length; i++) {
+
       Instant currentDate = DATES[i];
 
-      // FILTER_OPTIONS[0] == is   FILTER TERMS[0] == "bestBeforeDate"
       filteredList = this.inventoryDAO.filterRetrieve(null, null, currentDate);
 
       System.out.println("\n\n\n TestBeforeDate list for date: " + currentDate + "\n" + filteredList);
 
-      // There is only one of each amount in the list
-      //Assert.assertTrue(filteredList.size() == 1);
 
-      // *******  THIS MIGHT BE THE ASSERTION I NEED ************8
       // Since the list is full of ascending numbers in order without repeats,
       // the ith index will have i values less than it
-      //Assert.assertTrue(filteredList.size() == i);
-
-
-      // Since the list is full of ascending numbers in order without repeats,
-      // the ith index will have (length of list - i - 1)  values greater than it
-      //                                      *note* -1 to exclude the ith index
-      //Assert.assertTrue(filteredList.size() == (NUMS.length - i - 1));
+      Assert.assertTrue(filteredList.size() == i);
     }
 
-/*
 
-    // Test unitOfMeasurement
+    // grabs the enum into list
+    UnitOfMeasurement[] filterType = UnitOfMeasurement.values();
+
+    //Test unitOfMeasurement
     for (int i = 0; i < UnitOfMeasurement.values().length; i++) {
 
-      // grabs the enum into list
-      UnitOfMeasurement[] filterType = UnitOfMeasurement.values();
+      filteredList = this.inventoryDAO.filterRetrieve(filterType[i], null, null);
 
-      // FILTER TERMS[1] == "unitOfMeasurement"
-      filteredList = this.inventoryDAO.filterRetrieve(FILTER_TERMS[1], filterType[i].toString(), "0");
+      System.out.println("\n\n\n Test UnitOfMeasurement list for: " + filterType[i] + "\n" + filteredList);
 
-      // there was only one of each unitOfMeasurement added to the list
+      // There is only one of each unit of measuremenat in the list
       Assert.assertTrue(filteredList.size() == 1);
     }
 
@@ -198,29 +189,13 @@ public class InventoryDAOTest {
     for (int i = 0; i < NUMS.length; i++) {
       String currentNumber = NUMS[i].toString();
 
-      // FILTER_OPTIONS[0] == is   FILTER TERMS_2 == "amount"
-      filteredList = this.inventoryDAO.filterRetrieve(FILTER_TERMS[2], FILTER_OPTIONS[0], currentNumber);
+      filteredList = this.inventoryDAO.filterRetrieve(null, currentNumber, null);
 
       // There is only one of each amount in the list
       Assert.assertTrue(filteredList.size() == 1);
-
-      // FILTER_OPTIONS[1] == lt   FILTER TERMS_2 == "amount"
-      filteredList = this.inventoryDAO.filterRetrieve(FILTER_TERMS[2], FILTER_OPTIONS[1], currentNumber);
-
-      // Since the list is full of ascending numbers in order without repeats,
-      // the ith index will have i values less than it
-      Assert.assertTrue(filteredList.size() == i);
-
-      // FILTER_OPTIONS[2] == gt   FILTER TERMS_2 == "amount"
-      filteredList = this.inventoryDAO.filterRetrieve(FILTER_TERMS[2], FILTER_OPTIONS[2], currentNumber);
-
-      // Since the list is full of ascending numbers in order without repeats,
-      // the ith index will have (length of list - i - 1)  values greater than it
-      //                                      *note* -1 to exclude the ith index
-      Assert.assertTrue(filteredList.size() == (NUMS.length - i - 1));
     }
 
-*/
+
 
   }
 }
