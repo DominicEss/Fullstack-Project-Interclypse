@@ -36,7 +36,7 @@ public class InventoryController {
    * Find Inventory.
    * @return List of Inventory.
    */
-  @GetMapping("/inventory")
+  @GetMapping(value = "/inventory")
   public List<Inventory> findInventories() {
     return this.inventoryDAO.findAll();
   }
@@ -48,7 +48,7 @@ public class InventoryController {
    * @param direction direction to sort in
    * @return List of Inventory.
    */
-  @GetMapping("/inventorySorted/")
+  @GetMapping(value = "/inventorySorted/")
   public List<Inventory> findSortedInventories(@RequestParam String sortVariable, @RequestParam String direction) {
     return this.inventoryDAO.findSorted(sortVariable, direction);
   }

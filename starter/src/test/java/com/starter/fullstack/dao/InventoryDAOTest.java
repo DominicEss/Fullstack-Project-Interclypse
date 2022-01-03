@@ -1,7 +1,11 @@
 package com.starter.fullstack.dao;
 
 import com.starter.fullstack.api.Inventory;
+import com.starter.fullstack.api.UnitOfMeasurement;
 import com.starter.fullstack.config.EmbedMongoClientOverrideConfig;
+import java.math.BigDecimal;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -16,6 +20,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
+
 /**
  * Test Inventory DAO.
  */
@@ -27,7 +32,18 @@ public class InventoryDAOTest {
   private MongoTemplate mongoTemplate;
   private InventoryDAO inventoryDAO;
   private static final String NAME = "Amber";
-  private static final String PRODUCT_TYPE = "hops";
+  private static final String PRODUCT_TYPE = "Hops";
+  private final BigDecimal[] NUMS = {BigDecimal.valueOf(0), BigDecimal.valueOf(1),  
+                                     BigDecimal.valueOf(5), BigDecimal.valueOf(14),
+                                     BigDecimal.valueOf(15), BigDecimal.valueOf(24)};
+  private final Instant[] DATES = { Instant.now().truncatedTo(ChronoUnit.SECONDS),
+                                    Instant.now().plus(1, ChronoUnit.DAYS).truncatedTo(ChronoUnit.SECONDS),
+                                    Instant.now().plus(2, ChronoUnit.DAYS).truncatedTo(ChronoUnit.SECONDS),
+                                    Instant.now().plus(3, ChronoUnit.DAYS).truncatedTo(ChronoUnit.SECONDS),
+                                    Instant.now().plus(4, ChronoUnit.DAYS).truncatedTo(ChronoUnit.SECONDS),
+                                    Instant.now().plus(5, ChronoUnit.DAYS).truncatedTo(ChronoUnit.SECONDS) };
+  private final String[] FILTER_TERMS = { "bestBeforeDate", "unitOfMeasurement", "amount" };
+  private final String[] FILTER_OPTIONS = { "is", "lt", "gt" };
 
   @Before
   public void setup() {
@@ -38,6 +54,8 @@ public class InventoryDAOTest {
   public void tearDown() {
     this.mongoTemplate.dropCollection(Inventory.class);
   }
+
+
 
  /**
   * Test Find All method. 
@@ -52,6 +70,7 @@ public class InventoryDAOTest {
     List<Inventory> actualInventory = this.inventoryDAO.findAll();
     Assert.assertFalse(actualInventory.isEmpty());
   }
+
 
 
  /**
@@ -84,6 +103,8 @@ public class InventoryDAOTest {
     Assert.assertFalse(actualInventory.isEmpty());
   }
 
+
+
   /**
   * Test delete method.
   */
@@ -104,5 +125,77 @@ public class InventoryDAOTest {
 
     actualInventory = this.inventoryDAO.findAll();
     Assert.assertTrue(actualInventory.isEmpty());
+  }
+
+
+
+ /**
+  * Test filter method. 
+  */
+  @Test
+ public void filterRetrieve() {
+    List<UnitOfMeasurement> MeasurementUnits = Arrays.asList(UnitOfMeasurement.values());
+    
+    // Add test data *note NUMS size == UnitOfMeasurement size == DATES size*
+    for (int i = 0; i < NUMS.length; i++) {
+      Inventory inventory = new Inventory();
+      inventory.setName(NAME);
+      inventory.setProductType(PRODUCT_TYPE);
+      inventory.setAmount(NUMS[i]);
+      inventory.setUnitOfMeasurement(MeasurementUnits.get(i));
+      inventory.setBestBeforeDate(DATES[i]);
+
+      this.inventoryDAO.create(inventory);
+    }
+
+    // At this point, the database is loaded with one of each type of amount, measurement unit, & dates
+
+    List<Inventory> filteredList;
+
+
+    // Test bestBeforeDate
+    for (int i = 0; i < DATES.length; i++) {
+
+      Instant currentDate = DATES[i];
+
+      filteredList = this.inventoryDAO.filterRetrieve(null, null, currentDate);
+
+      System.out.println("\n\n\n TestBeforeDate list for date: " + currentDate + "\n" + filteredList);
+
+
+      // Since the list is full of ascending numbers in order without repeats,
+      // the ith index will have i values less than it
+      Assert.assertTrue(filteredList.size() == i);
+    }
+
+
+    // grabs the enum into list
+    UnitOfMeasurement[] filterType = UnitOfMeasurement.values();
+
+    //Test unitOfMeasurement
+    for (int i = 0; i < UnitOfMeasurement.values().length; i++) {
+
+      filteredList = this.inventoryDAO.filterRetrieve(filterType[i], null, null);
+
+      System.out.println("\n\n\n Test UnitOfMeasurement list for: " + filterType[i] + "\n" + filteredList);
+
+      // There is only one of each unit of measuremenat in the list
+      Assert.assertTrue(filteredList.size() == 1);
+    }
+
+
+
+    // Test amount
+    for (int i = 0; i < NUMS.length; i++) {
+      String currentNumber = NUMS[i].toString();
+
+      filteredList = this.inventoryDAO.filterRetrieve(null, currentNumber, null);
+
+      // There is only one of each amount in the list
+      Assert.assertTrue(filteredList.size() == 1);
+    }
+
+
+
   }
 }

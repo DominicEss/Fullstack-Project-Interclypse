@@ -71,7 +71,9 @@ public class InventoryDAO  {
    * @return List of found Inventory.
    */
   public List<Inventory> findAll() {
-    return this.mongoTemplate.findAll(Inventory.class);
+    List<Inventory> testInv = this.mongoTemplate.findAll(Inventory.class);
+
+    return testInv;
   }
 
 
@@ -101,6 +103,41 @@ public class InventoryDAO  {
  
     return optFoundInv;
   }
+
+
+
+
+  /**
+   * Filter Retrieve Inventory.
+   * @param measurementUnit Unit of measurement to filter on: c, gal, oz, pt, lb, qt
+   * @param amount Amount to look for. Will find specific amount given
+   * @param bestBeforeDate Best before date to look for. Will give products before date
+   * @return Found Inventory.
+   */
+  public List<Inventory> filterRetrieve(Object measurementUnit, Object amount, Object bestBeforeDate) {
+    Query query = new Query();
+
+    if (measurementUnit != null) {
+      query.addCriteria(where("unitOfMeasurement").is(measurementUnit));
+    }
+
+
+    if (amount != null) {
+      query.addCriteria(where("amount").is(amount));
+    }
+
+
+    if (bestBeforeDate != null) {
+      query.addCriteria(where("bestBeforeDate").lt(bestBeforeDate));
+    }
+
+    return mongoTemplate.find(query, Inventory.class);
+  }
+
+
+
+
+
 
   /**
    * Update Inventory.

@@ -23,4 +23,22 @@ public enum UnitOfMeasurement {
   UnitOfMeasurement(String abbreviation) {
     this.abbreviation = abbreviation;
   }
+
+  /**
+   * Check if string is an enum value
+   * @param test value to check
+   * @return true if the value is contained in the enum
+   *         false otherwise
+   */
+  public static boolean contains(String test) {
+
+    for (UnitOfMeasurement val : UnitOfMeasurement.values()) {
+      if (val.name().equals(test)) {
+        return true;
+      }
+    }
+
+    return false;
+  } 
+
 }
