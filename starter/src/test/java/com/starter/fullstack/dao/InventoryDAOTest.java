@@ -160,8 +160,6 @@ public class InventoryDAOTest {
 
       filteredList = this.inventoryDAO.filterRetrieve(null, null, currentDate);
 
-      System.out.println("\n\n\n TestBeforeDate list for date: " + currentDate + "\n" + filteredList);
-
 
       // Since the list is full of ascending numbers in order without repeats,
       // the ith index will have i values less than it
@@ -176,8 +174,6 @@ public class InventoryDAOTest {
     for (int i = 0; i < UnitOfMeasurement.values().length; i++) {
 
       filteredList = this.inventoryDAO.filterRetrieve(filterType[i], null, null);
-
-      System.out.println("\n\n\n Test UnitOfMeasurement list for: " + filterType[i] + "\n" + filteredList);
 
       // There is only one of each unit of measuremenat in the list
       Assert.assertTrue(filteredList.size() == 1);
