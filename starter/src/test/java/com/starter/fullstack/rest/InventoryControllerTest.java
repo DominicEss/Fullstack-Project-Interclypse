@@ -2,6 +2,13 @@ package com.starter.fullstack.rest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.starter.fullstack.api.Inventory;
+import com.starter.fullstack.api.UnitOfMeasurement;
+import java.math.BigDecimal;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.time.format.DateTimeFormatter;
+import java.time.ZoneOffset;
+import java.time.ZoneId;
 import java.util.Arrays;
 import java.util.List;
 import org.junit.After;
@@ -17,13 +24,20 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @AutoConfigureMockMvc
 @RunWith(SpringRunner.class)
 public class InventoryControllerTest {
+
+  private Instant testDate = Instant.now().truncatedTo(ChronoUnit.DAYS);
 
   @Autowired
   private MockMvc mockMvc;
@@ -41,6 +55,9 @@ public class InventoryControllerTest {
     this.inventory = new Inventory();
     this.inventory.setId(null);
     this.inventory.setName("TEST");
+    this.inventory.setUnitOfMeasurement(UnitOfMeasurement.CUP);
+    this.inventory.setAmount(BigDecimal.valueOf(1));
+    this.inventory.setBestBeforeDate(testDate);
     // Sets the Mongo ID for us
     this.inventory = this.mongoTemplate.save(this.inventory);
   }
@@ -92,5 +109,47 @@ public class InventoryControllerTest {
 
     Assert.assertEquals(0, this.mongoTemplate.findAll(Inventory.class).size());
   }
+
+
+
+   /**
+   * Test findSortedInventories
+   * @throws Throwable see MockMvc
+   */
+  @Test
+  public void findSortedInventories() throws Throwable {
+    
+    this.mockMvc.perform(get("/filterRetrieve/")
+      .param("quantity", "1"))
+      .andDo(print())
+      .andExpect(status().isOk())
+      .andExpect(content().json("[" + this.objectMapper.writeValueAsString(inventory) + "]"));
+
+
+    this.mockMvc.perform(get("/filterRetrieve/")
+      .param("unitOfMeasure", "CUP"))
+      .andDo(print())
+      .andExpect(status().isOk())
+      .andExpect(content().json("[" + this.objectMapper.writeValueAsString(inventory) + "]"));
+
+
+    DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME.withZone(ZoneId.from(ZoneOffset.UTC));
+
+
+
+    String date = DateTimeFormatter.ISO_INSTANT.format(testDate);
+
+
+    this.mockMvc.perform(get("/filterRetrieve/")
+      .param("bestBefore", "2022-01-18T00:00:00Z"))
+      .andDo(print())
+      .andExpect(status().isOk())
+      .andExpect(content().json("[" + this.objectMapper.writeValueAsString(inventory) + "]"));
+
+
+  }
+
+
+
 }
 

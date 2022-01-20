@@ -55,6 +55,21 @@ public class InventoryController {
 
 
 
+    /**
+   * Find filtered inventory
+   * @param unitOfMeasure Unit of measurement to filter on: c, gal, oz, pt, lb, qt
+   * @param quantity Amount to look for. Will find specific amount given
+   * @param bestBefore Best before date to look for. Will give products before date
+   * @return Found Inventory.
+   */
+  @GetMapping(value = "/filterRetrieve/")
+  public List<Inventory> findSortedInventories(@RequestParam(required = false) Object unitOfMeasure, @RequestParam(required = false) Object quantity,
+                                               @RequestParam(required = false) Object bestBefore) {
+    return this.inventoryDAO.filterRetrieve(unitOfMeasure, quantity, bestBefore);
+  }
+
+
+
   /**
    * Create Inventory
    * @param inventory inventory 
