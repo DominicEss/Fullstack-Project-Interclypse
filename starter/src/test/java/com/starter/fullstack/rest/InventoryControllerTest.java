@@ -5,10 +5,8 @@ import com.starter.fullstack.api.Inventory;
 import com.starter.fullstack.api.UnitOfMeasurement;
 import java.math.BigDecimal;
 import java.time.Instant;
-import java.time.temporal.ChronoUnit;
 import java.time.format.DateTimeFormatter;
-import java.time.ZoneOffset;
-import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.List;
 import org.junit.After;
@@ -26,10 +24,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -121,31 +116,31 @@ public class InventoryControllerTest {
     
     this.mockMvc.perform(get("/filterRetrieve/")
       .param("quantity", "1"))
-      .andDo(print())
       .andExpect(status().isOk())
       .andExpect(content().json("[" + this.objectMapper.writeValueAsString(inventory) + "]"));
 
 
     this.mockMvc.perform(get("/filterRetrieve/")
       .param("unitOfMeasure", "CUP"))
-      .andDo(print())
       .andExpect(status().isOk())
       .andExpect(content().json("[" + this.objectMapper.writeValueAsString(inventory) + "]"));
 
 
-    DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME.withZone(ZoneId.from(ZoneOffset.UTC));
+    Instant testInstant = Instant.now().plus(1, ChronoUnit.DAYS).truncatedTo(ChronoUnit.DAYS);
+
+    DateTimeFormatter formatter = DateTimeFormatter.ISO_INSTANT;
 
 
 
-    String date = DateTimeFormatter.ISO_INSTANT.format(testDate);
+    String date = DateTimeFormatter.ISO_INSTANT.format(testInstant);
 
 
     this.mockMvc.perform(get("/filterRetrieve/")
-      .param("bestBefore", "2022-01-18T00:00:00Z"))
-      .andDo(print())
+      .param("bestBefore", date))
       .andExpect(status().isOk())
       .andExpect(content().json("[" + this.objectMapper.writeValueAsString(inventory) + "]"));
 
+    // Awesome debug - .andDo(print())
 
   }
 

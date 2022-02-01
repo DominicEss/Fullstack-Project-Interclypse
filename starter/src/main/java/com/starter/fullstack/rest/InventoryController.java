@@ -2,6 +2,7 @@ package com.starter.fullstack.rest;
 
 import com.starter.fullstack.api.Inventory;
 import com.starter.fullstack.dao.InventoryDAO;
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import javax.validation.Valid;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+
 
 
 /**
@@ -63,8 +65,9 @@ public class InventoryController {
    * @return Found Inventory.
    */
   @GetMapping(value = "/filterRetrieve/")
-  public List<Inventory> findSortedInventories(@RequestParam(required = false) Object unitOfMeasure, @RequestParam(required = false) Object quantity,
-                                               @RequestParam(required = false) Object bestBefore) {
+  public List<Inventory> filterRetrieve(@RequestParam(required = false) Object unitOfMeasure, 
+                                        @RequestParam(required = false) Object quantity,
+                                        @RequestParam(required = false) Instant bestBefore) {
     return this.inventoryDAO.filterRetrieve(unitOfMeasure, quantity, bestBefore);
   }
 

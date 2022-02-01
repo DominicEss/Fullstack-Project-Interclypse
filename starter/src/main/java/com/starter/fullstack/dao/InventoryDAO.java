@@ -1,6 +1,7 @@
 package com.starter.fullstack.dao;
 
 import com.starter.fullstack.api.Inventory;
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import javax.annotation.PostConstruct;
@@ -114,7 +115,7 @@ public class InventoryDAO  {
    * @param bestBeforeDate Best before date to look for. Will give products before date
    * @return Found Inventory.
    */
-  public List<Inventory> filterRetrieve(Object measurementUnit, Object amount, Object bestBeforeDate) {
+  public List<Inventory> filterRetrieve(Object measurementUnit, Object amount, Instant bestBeforeDate) {
     Query query = new Query();
 
     if (measurementUnit != null) {
