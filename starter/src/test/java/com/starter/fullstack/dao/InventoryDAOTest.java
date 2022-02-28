@@ -134,15 +134,17 @@ public class InventoryDAOTest {
   */
   @Test
  public void filterRetrieve() {
-    List<UnitOfMeasurement> MeasurementUnits = Arrays.asList(UnitOfMeasurement.values());
-    
+
+    // grabs the enum into list
+    UnitOfMeasurement[] filterType = UnitOfMeasurement.values();
+
     // Add test data *note NUMS size == UnitOfMeasurement size == DATES size*
     for (int i = 0; i < NUMS.length; i++) {
       Inventory inventory = new Inventory();
       inventory.setName(NAME);
       inventory.setProductType(PRODUCT_TYPE);
       inventory.setAmount(NUMS[i]);
-      inventory.setUnitOfMeasurement(MeasurementUnits.get(i));
+      inventory.setUnitOfMeasurement(filterType[i]);
       inventory.setBestBeforeDate(DATES[i]);
 
       this.inventoryDAO.create(inventory);
@@ -153,12 +155,20 @@ public class InventoryDAOTest {
     List<Inventory> filteredList;
 
 
+    UnitOfMeasurement emptyMeasure = null;
+    BigDecimal emptyBigDecimal = null;
+    Instant emptyInstant = null;
+
+
+
     // Test bestBeforeDate
     for (int i = 0; i < DATES.length; i++) {
 
       Instant currentDate = DATES[i];
 
-      filteredList = this.inventoryDAO.filterRetrieve(null, null, currentDate);
+
+      filteredList = this.inventoryDAO.filterRetrieve(emptyMeasure, emptyBigDecimal, currentDate);
+
 
 
       // Since the list is full of ascending numbers in order without repeats,
@@ -167,13 +177,13 @@ public class InventoryDAOTest {
     }
 
 
-    // grabs the enum into list
-    UnitOfMeasurement[] filterType = UnitOfMeasurement.values();
+
 
     //Test unitOfMeasurement
     for (int i = 0; i < UnitOfMeasurement.values().length; i++) {
 
-      filteredList = this.inventoryDAO.filterRetrieve(filterType[i], null, null);
+      filteredList = this.inventoryDAO.filterRetrieve(filterType[i], emptyBigDecimal, emptyInstant);
+
 
       // There is only one of each unit of measuremenat in the list
       Assert.assertTrue(filteredList.size() == 1);
@@ -185,11 +195,18 @@ public class InventoryDAOTest {
     for (int i = 0; i < NUMS.length; i++) {
       String currentNumber = NUMS[i].toString();
 
-      filteredList = this.inventoryDAO.filterRetrieve(null, currentNumber, null);
+      filteredList = this.inventoryDAO.filterRetrieve(emptyMeasure, NUMS[i], emptyInstant);
 
       // There is only one of each amount in the list
       Assert.assertTrue(filteredList.size() == 1);
     }
+
+
+
+    // Test multiple arguments
+    filteredList = this.inventoryDAO.filterRetrieve(filterType[1], NUMS[1], DATES[2]);
+
+    Assert.assertTrue(filteredList.size() == 1);
 
 
 

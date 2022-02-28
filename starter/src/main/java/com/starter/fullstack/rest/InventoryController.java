@@ -1,7 +1,10 @@
 package com.starter.fullstack.rest;
 
 import com.starter.fullstack.api.Inventory;
+import com.starter.fullstack.api.UnitOfMeasurement;
 import com.starter.fullstack.dao.InventoryDAO;
+import java.math.BigDecimal;
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import javax.validation.Valid;
@@ -13,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+
 
 
 /**
@@ -51,6 +55,22 @@ public class InventoryController {
   @GetMapping(value = "/inventorySorted/")
   public List<Inventory> findSortedInventories(@RequestParam String sortVariable, @RequestParam String direction) {
     return this.inventoryDAO.findSorted(sortVariable, direction);
+  }
+
+
+
+    /**
+   * Find filtered inventory
+   * @param unitOfMeasure Unit of measurement to filter on: c, gal, oz, pt, lb, qt
+   * @param quantity Amount to look for. Will find specific amount given
+   * @param bestBefore Best before date to look for. Will give products before date
+   * @return Found Inventory.
+   */
+  @GetMapping(value = "/filterRetrieve/")
+  public List<Inventory> filterRetrieve(@RequestParam(required = false) UnitOfMeasurement unitOfMeasure, 
+                                        @RequestParam(required = false) BigDecimal quantity,
+                                        @RequestParam(required = false) Instant bestBefore) {
+    return this.inventoryDAO.filterRetrieve(unitOfMeasure, quantity, bestBefore);
   }
 
 
