@@ -1,6 +1,8 @@
 package com.starter.fullstack.dao;
 
 import com.starter.fullstack.api.Inventory;
+import com.starter.fullstack.api.UnitOfMeasurement;
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
@@ -13,6 +15,7 @@ import org.springframework.data.mongodb.core.query.Collation;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.util.Assert;
+import org.springframework.web.bind.annotation.RequestParam;
 import static org.springframework.data.mongodb.core.query.Criteria.where;
 import static org.springframework.data.mongodb.core.query.Query.query;
 
@@ -115,7 +118,9 @@ public class InventoryDAO  {
    * @param bestBeforeDate Best before date to look for. Will give products before date
    * @return Found Inventory.
    */
-  public List<Inventory> filterRetrieve(Object measurementUnit, Object amount, Instant bestBeforeDate) {
+  public List<Inventory> filterRetrieve(@RequestParam(required = false) UnitOfMeasurement measurementUnit,
+                                        @RequestParam(required = false) BigDecimal amount,
+                                        @RequestParam(required = false) Instant bestBeforeDate) {
     Query query = new Query();
 
     if (measurementUnit != null) {

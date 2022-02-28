@@ -1,7 +1,9 @@
 package com.starter.fullstack.rest;
 
 import com.starter.fullstack.api.Inventory;
+import com.starter.fullstack.api.UnitOfMeasurement;
 import com.starter.fullstack.dao.InventoryDAO;
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
@@ -65,8 +67,8 @@ public class InventoryController {
    * @return Found Inventory.
    */
   @GetMapping(value = "/filterRetrieve/")
-  public List<Inventory> filterRetrieve(@RequestParam(required = false) Object unitOfMeasure, 
-                                        @RequestParam(required = false) Object quantity,
+  public List<Inventory> filterRetrieve(@RequestParam(required = false) UnitOfMeasurement unitOfMeasure, 
+                                        @RequestParam(required = false) BigDecimal quantity,
                                         @RequestParam(required = false) Instant bestBefore) {
     return this.inventoryDAO.filterRetrieve(unitOfMeasure, quantity, bestBefore);
   }
