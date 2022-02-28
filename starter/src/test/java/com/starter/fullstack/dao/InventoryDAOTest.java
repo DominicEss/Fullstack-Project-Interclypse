@@ -166,7 +166,9 @@ public class InventoryDAOTest {
 
       Instant currentDate = DATES[i];
 
+
       filteredList = this.inventoryDAO.filterRetrieve(emptyMeasure, emptyBigDecimal, currentDate);
+
 
 
       // Since the list is full of ascending numbers in order without repeats,
@@ -181,6 +183,7 @@ public class InventoryDAOTest {
     for (int i = 0; i < UnitOfMeasurement.values().length; i++) {
 
       filteredList = this.inventoryDAO.filterRetrieve(filterType[i], emptyBigDecimal, emptyInstant);
+
 
       // There is only one of each unit of measuremenat in the list
       Assert.assertTrue(filteredList.size() == 1);
