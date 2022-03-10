@@ -8,6 +8,7 @@ const actions = {
   INVENTORY_GET_SORTED: 'inventory/inventorySorted',
   INVENTORY_GET_ALL_PENDING: 'inventory/get_all_PENDING',
   INVENTORY_GET_BY_ID: 'inventory/retrieveInventory',
+  INVENTORY_GET_BY_FILTER: 'inventory/filterRetrieve',
   INVENTORY_SAVE: 'inventory/save',
   INVENTORY_DELETE: 'inventory/delete',
   INVENTORY_REFRESH: 'inventory/refresh',
