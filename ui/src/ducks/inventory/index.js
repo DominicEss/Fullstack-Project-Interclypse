@@ -48,6 +48,18 @@ export const retrieveById = createAction(actions.INVENTORY_GET_BY_ID, (id) =>
 )
 
 
+
+export const filterRetrieve = createAction(actions.INVENTORY_GET_BY_FILTER, (unitOfMeasurement, amount, bestBeforeDate) => 
+  (dispatch, getState, config) => axios
+    .get(`${config.restAPIUrl}/filterRetrieve/`, { params: { unitOfMeasurement: unitOfMeasurement, amount: amount, bestBeforeDate: bestBeforeDate } })
+    .then((suc) => {
+      dispatch(refreshInventory(JSON.parse(suc.request.response)))
+    })
+
+)
+
+
+
 export const updateInventory = createAction(actions.INVENTORY_UPDATE, (inventory) =>
   (dispatch, getState, config) => axios
     .post(`${config.restAPIUrl}/update`, inventory)
